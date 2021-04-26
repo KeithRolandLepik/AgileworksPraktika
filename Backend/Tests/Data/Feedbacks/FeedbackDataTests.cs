@@ -37,7 +37,7 @@ namespace Tests.Data.Feedbacks
         [TestMethod]
         public void CompletedTest()
         {
-            var val = GetRandom.Bool();
+            var val = false;
             Assert.AreNotEqual(obj.Completed, val);
             obj.Completed = val;
             Assert.AreEqual(obj.Completed, val);

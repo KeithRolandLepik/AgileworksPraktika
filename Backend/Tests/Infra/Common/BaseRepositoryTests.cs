@@ -84,8 +84,7 @@ namespace Tests.Infra.Common
         {
             var expected = obj.Get(data.Id).GetAwaiter().GetResult();
             Assert.IsNull(expected.Data);
-            obj.Add(new Feedback(data)).GetAwaiter();
-            expected = obj.Get(data.Id).GetAwaiter().GetResult(); 
+            expected = obj.Add(new Feedback(data)).GetAwaiter().GetResult();
             TestArePropertyValuesEqual(expected.Data, data);
 
         }

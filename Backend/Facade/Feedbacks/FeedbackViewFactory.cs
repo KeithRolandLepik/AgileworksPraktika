@@ -1,5 +1,6 @@
 ﻿using Data.Feedbacks;
 using Domain.Feedbacks;
+using System;
 
 namespace Facade.Feedbacks
 {
@@ -32,6 +33,27 @@ namespace Facade.Feedbacks
                 DateAdded = o.Data.DateAdded,
             };
             return v;
+        }
+        public static Feedback CreateDomainFromInput(FeedbackInput input)
+        {
+            var d = new FeedbackData
+            {
+                Description = input.Description,
+                DueDate = input.DueDate,
+                DateAdded = DateTime.Now
+            };
+            return new Feedback(d);
+        }
+        public static Feedback CreateDomainFromUpdate(FeedbackUpdate update)
+        {
+            var d = new FeedbackData
+            {
+                Description = update.Description,
+                DueDate = update.DueDate,
+                Completed = update.Completed,
+                DateAdded = DateTime.Now,
+            };
+            return new Feedback(d);
         }
     }
 }

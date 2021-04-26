@@ -8,7 +8,7 @@ namespace Domain.Common
         Task<List<T>> Get();
         Task<T> Get(int id);
         Task Delete(int id);
-        Task Add(T obj);
+        Task<T> Add(T obj);
         Task Update(T obj);
     }
 }

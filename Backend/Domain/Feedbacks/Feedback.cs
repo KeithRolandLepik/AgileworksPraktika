@@ -11,7 +11,7 @@ namespace Domain.Feedbacks
         {
             if(data != null) 
             {
-                CheckDueDate();
+                CalculateAndSetOverDue();
             }
         }
         private double GetHoursTillDueDate()
@@ -20,15 +20,13 @@ namespace Domain.Feedbacks
             var dueDate = Data.DueDate;
             return (dueDate - today).TotalHours;
         }
-        private bool CheckDueDate()
+        private void CalculateAndSetOverDue()
         {
             if (GetHoursTillDueDate() > 1)
             {
                 Data.Overdue = false;
-                return false;
             }
             Data.Overdue = true;
-            return true;
         }
     }
 }

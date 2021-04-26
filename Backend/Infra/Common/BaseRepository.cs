@@ -61,11 +61,15 @@ namespace Infra.Common
             await db.SaveChangesAsync();
         }
 
-        public async Task Add(TDomain obj)
+        public async Task<TDomain> Add(TDomain obj)
         {
-            if (obj?.Data is null) return;
+            if (obj?.Data is null) return new TDomain();
             dbSet.Add(obj.Data);
             await db.SaveChangesAsync();
+            
+            var o = await Get(obj.Data.Id);
+            
+            return o;
         }
 
         public async Task Update(TDomain obj)
