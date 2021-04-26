@@ -35,14 +35,14 @@ namespace Soft.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<FeedbackView>> GetFeedback(int id)
         {
-            var feedback = await _repository.Get(id);
+                var feedback = await _repository.Get(id);
 
-            if (feedback == null)
-            {
-                return NotFound();
-            }
+                if (feedback.Data == null)
+                {
+                    return NotFound();
+                }
 
-            return FeedbackViewFactory.Create(feedback);
+            return Ok(FeedbackViewFactory.Create(feedback));
         }
 
         // PUT: api/FeedbackDatas/5
@@ -54,9 +54,11 @@ namespace Soft.Controllers
             updatedFeedback.Data.Id = id;
             if(updatedFeedback.Data.Description != null && updatedFeedback.Data.DueDate != default)
             {
-                await _repository.Update(updatedFeedback); 
-                var result = await GetFeedback(id);
-                return Ok(result.Value);
+                if (_repository.Get(id).GetAwaiter().GetResult().Data != null)
+                {
+                    await _repository.Update(updatedFeedback);
+                    return Ok();
+                }
             }
             return BadRequest();
 
@@ -88,7 +90,7 @@ namespace Soft.Controllers
         public async Task<IActionResult> DeleteFeedback(int id)
         {
             var feedbackData = await _repository.Get(id);
-            if (feedbackData == null)
+            if (feedbackData.Data == null)
             {
                 return NotFound();
             }

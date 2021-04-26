@@ -10,9 +10,9 @@ namespace Domain.Feedbacks
         public Feedback(FeedbackData data) : base(data) 
         {
             if(data != null) 
-            {
-                CalculateAndSetOverDue();
-            }
+                {
+                    CalculateAndSetOverDue();
+                }
         }
         private double GetHoursTillDueDate()
         {
@@ -26,7 +26,9 @@ namespace Domain.Feedbacks
             {
                 Data.Overdue = false;
             }
+            else { 
             Data.Overdue = true;
+            }
         }
     }
 }
