@@ -6,7 +6,7 @@ export default function getSetDateDifference() {
   const tNumber = ref(0)
   const tUnit = ref("")
 
-  const calculateDateDifference = async (startDate: Date, endDate: Date) => {
+  const calculateAndSetDateDifference = async (startDate: Date, endDate: Date) => {
       const end = ref(0)
       const start = ref(0)
 
@@ -63,5 +63,5 @@ export default function getSetDateDifference() {
       return tNumber.value
     };
 
-    return { calculateDateDifference, getTimeUnit, getTimeAsNumber };
+    return { calculateAndSetDateDifference, getTimeUnit, getTimeAsNumber };
 }

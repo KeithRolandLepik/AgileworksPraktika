@@ -30,7 +30,7 @@ export default defineComponent({
     const { updateFeedback, feedbacks } = useFeedbacks();
 
     const {
-      calculateDateDifference,
+      calculateAndSetDateDifference,
       getTimeUnit,
       getTimeAsNumber,
     } = getSetDateDifference();
@@ -46,7 +46,7 @@ export default defineComponent({
       }
     };
 
-    await calculateDateDifference(new Date(), props.feedbackData.dueDate);
+    await calculateAndSetDateDifference(new Date(), props.feedbackData.dueDate);
     const isTabOpen = ref(false);
 
     const openTab = () => {

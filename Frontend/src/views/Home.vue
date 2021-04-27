@@ -12,7 +12,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, ref, watch } from 'vue';
+import { defineComponent } from 'vue';
 import FeedbackList from '../components/FeedbackList/FeedbackList.vue';
 export default defineComponent({
   components: {
