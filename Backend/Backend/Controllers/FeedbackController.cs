@@ -18,7 +18,6 @@ namespace Soft.Controllers
             _repository = new FeedbackRepository(context);
         }
 
-        // GET: api/FeedbackDatas
         [HttpGet]
         public async Task<ActionResult<List<FeedbackView>>> GetFeedbacks()
         {
@@ -31,7 +30,6 @@ namespace Soft.Controllers
             return viewList;
         }
 
-        // GET: api/FeedbackDatas/5
         [HttpGet("{id}")]
         public async Task<ActionResult<FeedbackView>> GetFeedback(int id)
         {
@@ -45,8 +43,6 @@ namespace Soft.Controllers
             return Ok(FeedbackMapper.MapToView(feedback));
         }
 
-        // PUT: api/FeedbackDatas/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutFeedback(int id, FeedbackUpdate feedbackUpdate)
         {
@@ -64,8 +60,6 @@ namespace Soft.Controllers
 
         }
 
-        // POST: api/FeedbackDatas
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<FeedbackView>> PostFeedback(FeedbackInput feedbackPost)
         {
@@ -85,7 +79,6 @@ namespace Soft.Controllers
             return BadRequest();
         }
 
-        // DELETE: api/FeedbackDatas/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteFeedback(int id)
         {

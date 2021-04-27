@@ -1,0 +1,344 @@
+{
+	"info": {
+		"_postman_id": "ed11736f-bf61-4f2c-b370-d4dc56bb78fd",
+		"name": "FeedbackApp API Tests",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "GetFeedbacks",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Test get feedbacks list and add environment variable\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.environment.set('getFeedbacksRequestCount', jsonData.length);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/api/Feedback",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"Feedback"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PostFeedback1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"pm.test(\"TestResponseValues\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.dueDate).to.eql(pm.environment.get('notOverDueDate'));\r",
+							"    pm.expect(jsonData.completed).to.eql(false);\r",
+							"    pm.expect(jsonData.overdue).to.eql(false);\r",
+							"    pm.expect(jsonData.description).to.eql('test123');\r",
+							"    \r",
+							"    pm.environment.set('PostFeedback1.id', jsonData.id);\r",
+							"    pm.sendRequest(pm.environment.get('url') + '/api/Feedback/' +jsonData.id, (error,response) => {\r",
+							"        if(error){\r",
+							"            console.log(error.message);\r",
+							"        }\r",
+							"            var jsonData2 = response.json();    \r",
+							"            pm.expect(jsonData.dueDate).to.eql(pm.environment.get('notOverDueDate'));\r",
+							"            pm.expect(jsonData.completed).to.eql(false);\r",
+							"            pm.expect(jsonData.overdue).to.eql(false);\r",
+							"            pm.expect(jsonData.description).to.eql('test123');\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "    {\r\n        \"dueDate\": \"{{notOverDueDate}}\",\r\n        \"description\": \"test123\"\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/Feedback",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"Feedback"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PostFeedback2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 201\", function () {\r",
+							"    pm.response.to.have.status(201);\r",
+							"});\r",
+							"pm.test(\"TestResponseValues\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.dueDate).to.eql(pm.environment.get('overDueDate'));\r",
+							"    pm.expect(jsonData.completed).to.eql(false);\r",
+							"    pm.expect(jsonData.overdue).to.eql(true);\r",
+							"    pm.expect(jsonData.description).to.eql('test123');\r",
+							"    \r",
+							"    pm.environment.set('PostFeedback2.id', jsonData.id);\r",
+							"    pm.sendRequest(pm.environment.get('url') + '/api/Feedback/' +jsonData.id, (error,response) => {\r",
+							"        if(error){\r",
+							"            console.log(error.message);\r",
+							"        }\r",
+							"            var jsonData2 = response.json();    \r",
+							"            pm.expect(jsonData.dueDate).to.eql(pm.environment.get('overDueDate'));\r",
+							"            pm.expect(jsonData.completed).to.eql(false);\r",
+							"            pm.expect(jsonData.overdue).to.eql(true);\r",
+							"            pm.expect(jsonData.description).to.eql('test123');\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "    {\r\n        \"dueDate\": \"{{overDueDate}}\",\r\n        \"description\": \"test123\"\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/Feedback",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"Feedback"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "PostFeedback3",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is not 201\", function () {\r",
+							"    if(pm.response.code === 201){\r",
+							"        pm.expect.fail('status code is 201')\r",
+							"    }\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "    {\r\n    }",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/Feedback",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"Feedback"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "GetFeedbacks2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"TestCollectionCount\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.length - 2).to.eql(pm.environment.get('getFeedbacksRequestCount'));\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/api/feedback",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"feedback"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DeleteFeedback1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 204\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});\r",
+							"pm.test(\"Get status code is 404\",function () {\r",
+							" pm.sendRequest(pm.environment.get('url')+'/api/Feedback/'+pm.environment.get('PostFeedback1.id'), (error,response) => {\r",
+							"     pm.expect(response.code).to.eql(404);\r",
+							"     pm.environment.unset('PostFeedback1.id');\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/api/Feedback/{{PostFeedback1.id}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"Feedback",
+						"{{PostFeedback1.id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "DeleteFeedback2",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 204\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});\r",
+							"pm.test(\"TestCollectionSizes\", function () {\r",
+							"    pm.sendRequest(pm.environment.get('url')+'/api/Feedback' , (error,response) => {\r",
+							"        if(error){\r",
+							"            console.log(error.message);\r",
+							"        }\r",
+							"            var jsonData2 = response.json();\r",
+							"            pm.expect(jsonData2.length).to.eql(pm.environment.get('getFeedbacksRequestCount'));\r",
+							"            pm.environment.unset('PostFeedback2.id');\r",
+							"            pm.environment.unset('getFeedbacksRequestCount');\r",
+							"    });\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/api/Feedback/{{PostFeedback2.id}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"Feedback",
+						"{{PostFeedback2.id}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"var moment = require('moment')",
+					"pm.environment.set('overDueDate', moment().toISOString());",
+					"pm.environment.set('notOverDueDate', moment().add(14, 'day').toISOString());",
+					"",
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}
