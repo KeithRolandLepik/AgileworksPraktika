@@ -1,10 +1,7 @@
-import { reactive, ref, toRefs } from 'vue';
+import { ref, toRefs } from 'vue';
 
-const state = reactive({
 
-});
-
-export default function getDateDifference() {
+export default function getSetDateDifference() {
 
   const tNumber = ref(0)
   const tUnit = ref("")
@@ -66,5 +63,5 @@ export default function getDateDifference() {
       return tNumber.value
     };
 
-    return { ...toRefs(state), calculateDateDifference, getTimeUnit, getTimeAsNumber };
+    return { calculateDateDifference, getTimeUnit, getTimeAsNumber };
 }

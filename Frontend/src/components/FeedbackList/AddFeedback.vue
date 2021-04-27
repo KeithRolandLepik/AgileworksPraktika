@@ -29,7 +29,8 @@
 
 <script lang="ts">
 import useFeedbacks from '@/api/useFeedbacks';
-import FeedbackData from '@/interfaces/FeedbackData';
+import FeedbackInput from '@/interfaces/FeedbackInput';
+
 import { useRouter } from 'vue-router';
 import { defineComponent, ref, Ref } from 'vue';
 
@@ -38,14 +39,11 @@ export default defineComponent({
     const { addFeedback } = useFeedbacks();
     const router = useRouter();
 
-    const formFeedback: Ref<FeedbackData> = ref({});
+    const formFeedback: Ref<FeedbackInput> = ref({});
 
     const errors = ref<String[]>([]);
 
     const submitForm = async () => {
-      formFeedback.value.DateAdded = new Date();
-      formFeedback.value.OverDue = false;
-      formFeedback.value.Completed = false;
       errors.value = [];
 
       if (formFeedback.value.description && formFeedback.value.dueDate) {
@@ -54,7 +52,7 @@ export default defineComponent({
         formFeedback.value = ref({});
       }
 
-      if (formFeedback.value.description == undefined) {
+      if (formFeedback.value.description == undefined || formFeedback.value.description == '') {
         errors.value.push('Description required.');
       }
       if (formFeedback.value.dueDate == undefined) {

@@ -26,7 +26,7 @@ namespace Soft.Controllers
             var viewList = new List<FeedbackView>();
             foreach(var i in list)
             {
-                viewList.Add(FeedbackViewFactory.Create(i));
+                viewList.Add(FeedbackMapper.MapToView(i));
             }
             return viewList;
         }
@@ -42,7 +42,7 @@ namespace Soft.Controllers
                     return NotFound();
                 }
 
-            return Ok(FeedbackViewFactory.Create(feedback));
+            return Ok(FeedbackMapper.MapToView(feedback));
         }
 
         // PUT: api/FeedbackDatas/5
@@ -50,7 +50,7 @@ namespace Soft.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutFeedback(int id, FeedbackUpdate feedbackUpdate)
         {
-            var updatedFeedback = FeedbackViewFactory.CreateDomainFromUpdate(feedbackUpdate);
+            var updatedFeedback = FeedbackMapper.MapToDomainFromUpdate(feedbackUpdate);
             updatedFeedback.Data.Id = id;
             if(updatedFeedback.Data.Description != null && updatedFeedback.Data.DueDate != default)
             {
@@ -73,13 +73,13 @@ namespace Soft.Controllers
             {
                 if(feedbackPost.Description != null && feedbackPost.DueDate != default) 
                 { 
-                    var result = await _repository.Add(FeedbackViewFactory.CreateDomainFromInput(feedbackPost));
+                    var result = await _repository.Add(FeedbackMapper.MapToDomainFromInput(feedbackPost));
 
                     if(result == null)
                     {
                         return Conflict();
                     }
-                    return CreatedAtAction("GetFeedback", new { id = result.Data.Id}, FeedbackViewFactory.Create(result));
+                    return CreatedAtAction("GetFeedback", new { id = result.Data.Id}, FeedbackMapper.MapToView(result));
                 }
             }
             return BadRequest();

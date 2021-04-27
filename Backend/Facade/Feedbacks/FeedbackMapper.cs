@@ -4,9 +4,9 @@ using System;
 
 namespace Facade.Feedbacks
 {
-    public static class FeedbackViewFactory
+    public static class FeedbackMapper
     {
-        public static Feedback Create(FeedbackView v)
+        public static Feedback MapToDomain(FeedbackView v)
         {
             var d = new FeedbackData
             {
@@ -21,7 +21,7 @@ namespace Facade.Feedbacks
             return new Feedback(d);
         }
 
-        public static FeedbackView Create(Feedback o)
+        public static FeedbackView MapToView(Feedback o)
         {
             var v = new FeedbackView
             {
@@ -34,7 +34,7 @@ namespace Facade.Feedbacks
             };
             return v;
         }
-        public static Feedback CreateDomainFromInput(FeedbackInput input)
+        public static Feedback MapToDomainFromInput(FeedbackInput input)
         {
             var d = new FeedbackData
             {
@@ -44,7 +44,7 @@ namespace Facade.Feedbacks
             };
             return new Feedback(d);
         }
-        public static Feedback CreateDomainFromUpdate(FeedbackUpdate update)
+        public static Feedback MapToDomainFromUpdate(FeedbackUpdate update)
         {
             var d = new FeedbackData
             {

@@ -15,7 +15,7 @@ namespace Tests.Facade.Feedbacks
             var view = new FeedbackView 
             { Overdue = GetRandom.Bool(), Completed = GetRandom.Bool(),
               DateAdded = GetRandom.Datetime(), Description = "test", DueDate = GetRandom.Datetime() };
-            var data = FeedbackViewFactory.Create(view).Data;
+            var data = FeedbackMapper.MapToDomain(view).Data;
 
             TestArePropertyValuesEqual(view, data);
         }
@@ -24,7 +24,7 @@ namespace Tests.Facade.Feedbacks
         {
             var data = GetRandom.FeedbackData();
 
-            var view = FeedbackViewFactory.Create(new Feedback(data));
+            var view = FeedbackMapper.MapToView(new Feedback(data));
 
             TestArePropertyValuesEqual(view, data);
         }

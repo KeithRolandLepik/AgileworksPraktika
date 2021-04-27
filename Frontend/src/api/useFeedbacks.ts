@@ -1,13 +1,15 @@
 import { reactive, ref, toRefs, PropType, Ref } from 'vue';
 import useApi from './api';
 import FeedbackData from '../interfaces/FeedbackData';
+import FeedbackInput from '@/interfaces/FeedbackInput';
+import FeedbackUpdate from '@/interfaces/FeedbackUpdate';
 
 const state = reactive({
   feedbacks: Array<FeedbackData>(),
 });
 
 export default function useFeedbacks() {
-  const apiGetFeedbacks = useApi<FeedbackData[]>('FeedbackDatas');
+  const apiGetFeedbacks = useApi<FeedbackData[]>('Feedback');
   const loadFeedbacks = async () => {
     await apiGetFeedbacks.request();
     if (apiGetFeedbacks.response.value) {
@@ -15,7 +17,7 @@ export default function useFeedbacks() {
     }
   };
 
-  const addFeedback = async (feedback: FeedbackData) => {
+  const addFeedback = async (feedback: FeedbackInput) => {
     const requestOptions = {
       method: 'POST',
       headers: {
@@ -25,7 +27,7 @@ export default function useFeedbacks() {
       body: JSON.stringify(feedback),
     };
     const apiGetFeedbacks = useApi<FeedbackData>(
-      'FeedbackDatas',
+      'Feedback',
       requestOptions,
     );
     await apiGetFeedbacks.request();
@@ -35,7 +37,7 @@ export default function useFeedbacks() {
     }
   };
 
-  const updateFeedback = async (id: Number, feedback: FeedbackData) => {
+  const updateFeedback = async (id: Number, feedback: FeedbackUpdate) => {
     const requestOptions = {
       method: 'PUT',
       headers: {
@@ -45,7 +47,7 @@ export default function useFeedbacks() {
       body: JSON.stringify(feedback),
     };
 
-    const apiGetFeedbacks = useApi('FeedbackDatas/' + id, requestOptions);
+    const apiGetFeedbacks = useApi('Feedback/' + id, requestOptions);
     await apiGetFeedbacks.request();
   };
   return {

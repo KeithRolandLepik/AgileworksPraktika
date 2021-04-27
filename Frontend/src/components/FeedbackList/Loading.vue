@@ -3,13 +3,10 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, PropType } from 'vue'
-import FeedbackData from '../../interfaces/FeedbackData'
-import getDateDifference from '../getDateDifference';
+import { defineComponent } from 'vue'
 
 export default defineComponent({
    setup () {
-        
         return {}
     }
 })

@@ -16,7 +16,7 @@
 import useFeedbacks from '@/api/useFeedbacks';
 import { defineComponent, PropType, ref } from 'vue';
 import FeedbackData from '../../interfaces/FeedbackData';
-import getDateDifference from '../getDateDifference';
+import getSetDateDifference from '../getSetDateDifference';
 
 export default defineComponent({
   components: {},
@@ -33,7 +33,7 @@ export default defineComponent({
       calculateDateDifference,
       getTimeUnit,
       getTimeAsNumber,
-    } = getDateDifference();
+    } = getSetDateDifference();
 
     const changeToCompleted = async (id: Number) => {
       if(window.confirm("Do you really want to change this Feedback to Completed?")){

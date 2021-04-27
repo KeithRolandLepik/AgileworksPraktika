@@ -45,8 +45,6 @@ export default defineComponent({
     const { loadFeedbacks, feedbacks } = await useFeedbacks();
     await loadFeedbacks();
 
-    console.log(feedbacks);
-
     const pushToAdd = () => {
       router.push('/add');
     };
