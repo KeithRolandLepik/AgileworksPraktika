@@ -27,19 +27,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\Keith Roland\\.nuget\\packages\\": {}
+    "C:\\Users\\AgileWorksTesting\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Keith Roland\\source\\repos\\AgileworksPraktika\\Backend\\Domain\\Domain.csproj",
+      "projectUniqueName": "C:\\Users\\AgileWorksTesting\\Source\\Repos\\KeithRolandLepik\\AgileworksPraktika\\Backend\\Domain\\Domain.csproj",
       "projectName": "Domain",
-      "projectPath": "C:\\Users\\Keith Roland\\source\\repos\\AgileworksPraktika\\Backend\\Domain\\Domain.csproj",
-      "packagesPath": "C:\\Users\\Keith Roland\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Keith Roland\\source\\repos\\AgileworksPraktika\\Backend\\Domain\\obj\\",
+      "projectPath": "C:\\Users\\AgileWorksTesting\\Source\\Repos\\KeithRolandLepik\\AgileworksPraktika\\Backend\\Domain\\Domain.csproj",
+      "packagesPath": "C:\\Users\\AgileWorksTesting\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\AgileWorksTesting\\Source\\Repos\\KeithRolandLepik\\AgileworksPraktika\\Backend\\Domain\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Keith Roland\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\AgileWorksTesting\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -53,8 +53,8 @@
         "net5.0": {
           "targetAlias": "net5.0",
           "projectReferences": {
-            "C:\\Users\\Keith Roland\\source\\repos\\AgileworksPraktika\\Backend\\Data\\Data.csproj": {
-              "projectPath": "C:\\Users\\Keith Roland\\source\\repos\\AgileworksPraktika\\Backend\\Data\\Data.csproj"
+            "C:\\Users\\AgileWorksTesting\\Source\\Repos\\KeithRolandLepik\\AgileworksPraktika\\Backend\\Data\\Data.csproj": {
+              "projectPath": "C:\\Users\\AgileWorksTesting\\Source\\Repos\\KeithRolandLepik\\AgileworksPraktika\\Backend\\Data\\Data.csproj"
             }
           }
         }
@@ -83,7 +83,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.102\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.101\\RuntimeIdentifierGraph.json"
       }
     }
   }

@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Facade.Feedbacks;
 using System.Net.Http;
 using System.Web.Http;
+using Domain.Feedbacks;
 
 namespace Tests.Soft.Controllers
 {
@@ -18,12 +19,8 @@ namespace Tests.Soft.Controllers
     {
         protected GetRandom GetRandom;
         protected FeedbackDbContext db;
+        protected IFeedbackRepository repo;
         protected int count;
-
-        private class TestClass : FeedbackController
-        {
-            public TestClass(FeedbackDbContext d) : base(d) { }
-        }
 
         [TestInitialize]
         public override void TestInitialize()
@@ -33,8 +30,8 @@ namespace Tests.Soft.Controllers
 
             var options = new DbContextOptionsBuilder<FeedbackDbContext>().UseInMemoryDatabase("TestDb").Options;
             db = new FeedbackDbContext(options);
-
-            obj = new TestClass(db);
+            repo = new FeedbackRepository(db);
+            obj = new FeedbackController(repo);
 
             count = GetRandom.RndInteger(5, 10);
             AddFeedbacks();
@@ -109,6 +106,8 @@ namespace Tests.Soft.Controllers
         [TestMethod]
         public void PostFeedbackTest()
         {
+            //Getrandom tagastab 1995-st alates random date, aga uuel inputil peab olema date praegusets suurem
+
             var inputData = new FeedbackInput { Description = "test", DueDate = GetRandom.Datetime() };
             var result = obj.PostFeedback(inputData).GetAwaiter().GetResult();
             Assert.AreEqual(result.Result.GetType(), typeof(CreatedAtActionResult));

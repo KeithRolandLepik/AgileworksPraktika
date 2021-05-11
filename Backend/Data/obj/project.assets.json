@@ -8,19 +8,19 @@
     "net5.0": []
   },
   "packageFolders": {
-    "C:\\Users\\Keith Roland\\.nuget\\packages\\": {}
+    "C:\\Users\\AgileWorksTesting\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Keith Roland\\source\\repos\\AgileworksPraktika\\Backend\\Data\\Data.csproj",
+      "projectUniqueName": "C:\\Users\\AgileWorksTesting\\Source\\Repos\\KeithRolandLepik\\AgileworksPraktika\\Backend\\Data\\Data.csproj",
       "projectName": "Data",
-      "projectPath": "C:\\Users\\Keith Roland\\source\\repos\\AgileworksPraktika\\Backend\\Data\\Data.csproj",
-      "packagesPath": "C:\\Users\\Keith Roland\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Keith Roland\\source\\repos\\AgileworksPraktika\\Backend\\Data\\obj\\",
+      "projectPath": "C:\\Users\\AgileWorksTesting\\Source\\Repos\\KeithRolandLepik\\AgileworksPraktika\\Backend\\Data\\Data.csproj",
+      "packagesPath": "C:\\Users\\AgileWorksTesting\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\AgileWorksTesting\\Source\\Repos\\KeithRolandLepik\\AgileworksPraktika\\Backend\\Data\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\Keith Roland\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\AgileWorksTesting\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -60,7 +60,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.102\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.101\\RuntimeIdentifierGraph.json"
       }
     }
   }
