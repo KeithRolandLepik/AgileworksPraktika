@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\KeithRolandLepik\\source\\repos\\KeithRolandLepik\\AgileworksPraktika\\Backend\\Facade\\Facade.csproj": {}
+    "C:\\Users\\KeithRolandLepik\\source\\repos\\AgileworksPraktika\\Backend\\Facade\\Facade.csproj": {}
   },
   "projects": {
-    "C:\\Users\\KeithRolandLepik\\source\\repos\\KeithRolandLepik\\AgileworksPraktika\\Backend\\Data\\Data.csproj": {
+    "C:\\Users\\KeithRolandLepik\\source\\repos\\AgileworksPraktika\\Backend\\Data\\Data.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\KeithRolandLepik\\source\\repos\\KeithRolandLepik\\AgileworksPraktika\\Backend\\Data\\Data.csproj",
+        "projectUniqueName": "C:\\Users\\KeithRolandLepik\\source\\repos\\AgileworksPraktika\\Backend\\Data\\Data.csproj",
         "projectName": "Data",
-        "projectPath": "C:\\Users\\KeithRolandLepik\\source\\repos\\KeithRolandLepik\\AgileworksPraktika\\Backend\\Data\\Data.csproj",
+        "projectPath": "C:\\Users\\KeithRolandLepik\\source\\repos\\AgileworksPraktika\\Backend\\Data\\Data.csproj",
         "packagesPath": "C:\\Users\\KeithRolandLepik\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\KeithRolandLepik\\source\\repos\\KeithRolandLepik\\AgileworksPraktika\\Backend\\Data\\obj\\",
+        "outputPath": "C:\\Users\\KeithRolandLepik\\source\\repos\\AgileworksPraktika\\Backend\\Data\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\KeithRolandLepik\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -58,14 +58,14 @@
         }
       }
     },
-    "C:\\Users\\KeithRolandLepik\\source\\repos\\KeithRolandLepik\\AgileworksPraktika\\Backend\\Domain\\Domain.csproj": {
+    "C:\\Users\\KeithRolandLepik\\source\\repos\\AgileworksPraktika\\Backend\\Domain\\Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\KeithRolandLepik\\source\\repos\\KeithRolandLepik\\AgileworksPraktika\\Backend\\Domain\\Domain.csproj",
+        "projectUniqueName": "C:\\Users\\KeithRolandLepik\\source\\repos\\AgileworksPraktika\\Backend\\Domain\\Domain.csproj",
         "projectName": "Domain",
-        "projectPath": "C:\\Users\\KeithRolandLepik\\source\\repos\\KeithRolandLepik\\AgileworksPraktika\\Backend\\Domain\\Domain.csproj",
+        "projectPath": "C:\\Users\\KeithRolandLepik\\source\\repos\\AgileworksPraktika\\Backend\\Domain\\Domain.csproj",
         "packagesPath": "C:\\Users\\KeithRolandLepik\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\KeithRolandLepik\\source\\repos\\KeithRolandLepik\\AgileworksPraktika\\Backend\\Domain\\obj\\",
+        "outputPath": "C:\\Users\\KeithRolandLepik\\source\\repos\\AgileworksPraktika\\Backend\\Domain\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\KeithRolandLepik\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -82,8 +82,8 @@
           "net5.0": {
             "targetAlias": "net5.0",
             "projectReferences": {
-              "C:\\Users\\KeithRolandLepik\\source\\repos\\KeithRolandLepik\\AgileworksPraktika\\Backend\\Data\\Data.csproj": {
-                "projectPath": "C:\\Users\\KeithRolandLepik\\source\\repos\\KeithRolandLepik\\AgileworksPraktika\\Backend\\Data\\Data.csproj"
+              "C:\\Users\\KeithRolandLepik\\source\\repos\\AgileworksPraktika\\Backend\\Data\\Data.csproj": {
+                "projectPath": "C:\\Users\\KeithRolandLepik\\source\\repos\\AgileworksPraktika\\Backend\\Data\\Data.csproj"
               }
             }
           }
@@ -116,14 +116,14 @@
         }
       }
     },
-    "C:\\Users\\KeithRolandLepik\\source\\repos\\KeithRolandLepik\\AgileworksPraktika\\Backend\\Facade\\Facade.csproj": {
+    "C:\\Users\\KeithRolandLepik\\source\\repos\\AgileworksPraktika\\Backend\\Facade\\Facade.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\KeithRolandLepik\\source\\repos\\KeithRolandLepik\\AgileworksPraktika\\Backend\\Facade\\Facade.csproj",
+        "projectUniqueName": "C:\\Users\\KeithRolandLepik\\source\\repos\\AgileworksPraktika\\Backend\\Facade\\Facade.csproj",
         "projectName": "Facade",
-        "projectPath": "C:\\Users\\KeithRolandLepik\\source\\repos\\KeithRolandLepik\\AgileworksPraktika\\Backend\\Facade\\Facade.csproj",
+        "projectPath": "C:\\Users\\KeithRolandLepik\\source\\repos\\AgileworksPraktika\\Backend\\Facade\\Facade.csproj",
         "packagesPath": "C:\\Users\\KeithRolandLepik\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\KeithRolandLepik\\source\\repos\\KeithRolandLepik\\AgileworksPraktika\\Backend\\Facade\\obj\\",
+        "outputPath": "C:\\Users\\KeithRolandLepik\\source\\repos\\AgileworksPraktika\\Backend\\Facade\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\KeithRolandLepik\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -140,11 +140,11 @@
           "net5.0": {
             "targetAlias": "net5.0",
             "projectReferences": {
-              "C:\\Users\\KeithRolandLepik\\source\\repos\\KeithRolandLepik\\AgileworksPraktika\\Backend\\Data\\Data.csproj": {
-                "projectPath": "C:\\Users\\KeithRolandLepik\\source\\repos\\KeithRolandLepik\\AgileworksPraktika\\Backend\\Data\\Data.csproj"
+              "C:\\Users\\KeithRolandLepik\\source\\repos\\AgileworksPraktika\\Backend\\Data\\Data.csproj": {
+                "projectPath": "C:\\Users\\KeithRolandLepik\\source\\repos\\AgileworksPraktika\\Backend\\Data\\Data.csproj"
               },
-              "C:\\Users\\KeithRolandLepik\\source\\repos\\KeithRolandLepik\\AgileworksPraktika\\Backend\\Domain\\Domain.csproj": {
-                "projectPath": "C:\\Users\\KeithRolandLepik\\source\\repos\\KeithRolandLepik\\AgileworksPraktika\\Backend\\Domain\\Domain.csproj"
+              "C:\\Users\\KeithRolandLepik\\source\\repos\\AgileworksPraktika\\Backend\\Domain\\Domain.csproj": {
+                "projectPath": "C:\\Users\\KeithRolandLepik\\source\\repos\\AgileworksPraktika\\Backend\\Domain\\Domain.csproj"
               }
             }
           }
