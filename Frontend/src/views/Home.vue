@@ -42,7 +42,7 @@ $gray5: rgba(142, 142, 147);
   background: $gray;
   // background: #C9D6FF;  /* fallback for old browsers */
   // background: -webkit-linear-gradient(to right, #E2E2E2, #dee6fd);  /* Chrome 10-25, Safari 5.1-6 */
-  // background: linear-gradient(160deg, #E2E2E2, #e6ecff); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */ 
+  // background: linear-gradient(160deg, #E2E2E2, #e6ecff); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
   .header {
     width: 50%;
     display: flex;

@@ -16,12 +16,10 @@ namespace Tests.Infra.Feedbacks
         protected FeedbackDbContext db;
         protected DbSet<FeedbackData> dbSet;
         protected int count;
-        protected GetRandom GetRandom;
         protected Type type;
         [TestInitialize]
         public void TestInitialize()
         {
-            GetRandom = new GetRandom();
             type = typeof(FeedbackRepository);
             data = GetRandom.FeedbackData();
             count = GetRandom.RndInteger(5, 10);
@@ -36,20 +34,6 @@ namespace Tests.Infra.Feedbacks
         [TestCleanup] public void TestCleanup() => cleanDbSet();
         [TestMethod] public void IsSealedTest() => Assert.IsTrue(type.IsSealed); 
         
-        [TestMethod]
-        public void GetTest()
-        {
-            var l = obj.Get().GetAwaiter().GetResult();
-
-            Assert.AreEqual(l.Count, count);
-
-            var first = l[0].Data;
-            var second = l[1].Data;
-            var third = l[2].Data;
-
-            Assert.IsTrue(first.DueDate < second.DueDate);
-            Assert.IsTrue(second.DueDate < third.DueDate);
-        }
 
         private void addItems()
         {

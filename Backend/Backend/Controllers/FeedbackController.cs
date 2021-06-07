@@ -68,7 +68,7 @@ namespace Soft.Controllers
 
 
             var result = await _repository.Add(FeedbackMapper.MapToDomainFromInput(feedbackPost));
-            if (result == null) 
+            if (result.Data == null) 
                 return Conflict();
 
             return CreatedAtAction("GetFeedback", new { id = result.Data.Id }, FeedbackMapper.MapToView(result));

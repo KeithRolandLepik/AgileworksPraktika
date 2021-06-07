@@ -8,14 +8,11 @@ namespace Tests.Data.Feedbacks
     public class FeedbackDataTests : BaseClassTests<FeedbackData, DefinedEntityData>
     {
         private class TestClass : FeedbackData { }
-        private GetRandom GetRandom;
         [TestInitialize]
         public override void TestInitialize()
         {
             base.TestInitialize();
             obj = new TestClass();
-            GetRandom = new GetRandom();
-
         }
         [TestMethod]
         public void DueDateTest()

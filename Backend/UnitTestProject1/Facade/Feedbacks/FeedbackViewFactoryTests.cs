@@ -7,7 +7,6 @@ namespace Tests.Facade.Feedbacks
     [TestClass]
     public class FeedbackViewFactoryTests : BaseTests
     {
-        protected GetRandom GetRandom = new GetRandom();
 
         [TestMethod]
         public void CreateObjectTest()
