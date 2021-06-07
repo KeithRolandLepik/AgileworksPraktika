@@ -52,6 +52,7 @@ namespace Infra.Common
 
         public async Task Delete(int id)
         {
+
             if (id is default(int)) return;
 
             var d = await getData(id);

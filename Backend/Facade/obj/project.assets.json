@@ -46,19 +46,19 @@
     ]
   },
   "packageFolders": {
-    "C:\\Users\\AgileWorksTesting\\.nuget\\packages\\": {}
+    "C:\\Users\\KeithRolandLepik\\.nuget\\packages\\": {}
   },
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\AgileWorksTesting\\Source\\Repos\\KeithRolandLepik\\AgileworksPraktika\\Backend\\Facade\\Facade.csproj",
+      "projectUniqueName": "C:\\Users\\KeithRolandLepik\\Source\\Repos\\KeithRolandLepik\\AgileworksPraktika\\Backend\\Facade\\Facade.csproj",
       "projectName": "Facade",
-      "projectPath": "C:\\Users\\AgileWorksTesting\\Source\\Repos\\KeithRolandLepik\\AgileworksPraktika\\Backend\\Facade\\Facade.csproj",
-      "packagesPath": "C:\\Users\\AgileWorksTesting\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\AgileWorksTesting\\Source\\Repos\\KeithRolandLepik\\AgileworksPraktika\\Backend\\Facade\\obj\\",
+      "projectPath": "C:\\Users\\KeithRolandLepik\\Source\\Repos\\KeithRolandLepik\\AgileworksPraktika\\Backend\\Facade\\Facade.csproj",
+      "packagesPath": "C:\\Users\\KeithRolandLepik\\.nuget\\packages\\",
+      "outputPath": "C:\\Users\\KeithRolandLepik\\Source\\Repos\\KeithRolandLepik\\AgileworksPraktika\\Backend\\Facade\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
-        "C:\\Users\\AgileWorksTesting\\AppData\\Roaming\\NuGet\\NuGet.Config",
+        "C:\\Users\\KeithRolandLepik\\AppData\\Roaming\\NuGet\\NuGet.Config",
         "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
       ],
       "originalTargetFrameworks": [
@@ -72,11 +72,11 @@
         "net5.0": {
           "targetAlias": "net5.0",
           "projectReferences": {
-            "C:\\Users\\AgileWorksTesting\\Source\\Repos\\KeithRolandLepik\\AgileworksPraktika\\Backend\\Data\\Data.csproj": {
-              "projectPath": "C:\\Users\\AgileWorksTesting\\Source\\Repos\\KeithRolandLepik\\AgileworksPraktika\\Backend\\Data\\Data.csproj"
+            "C:\\Users\\KeithRolandLepik\\Source\\Repos\\KeithRolandLepik\\AgileworksPraktika\\Backend\\Data\\Data.csproj": {
+              "projectPath": "C:\\Users\\KeithRolandLepik\\Source\\Repos\\KeithRolandLepik\\AgileworksPraktika\\Backend\\Data\\Data.csproj"
             },
-            "C:\\Users\\AgileWorksTesting\\Source\\Repos\\KeithRolandLepik\\AgileworksPraktika\\Backend\\Domain\\Domain.csproj": {
-              "projectPath": "C:\\Users\\AgileWorksTesting\\Source\\Repos\\KeithRolandLepik\\AgileworksPraktika\\Backend\\Domain\\Domain.csproj"
+            "C:\\Users\\KeithRolandLepik\\Source\\Repos\\KeithRolandLepik\\AgileworksPraktika\\Backend\\Domain\\Domain.csproj": {
+              "projectPath": "C:\\Users\\KeithRolandLepik\\Source\\Repos\\KeithRolandLepik\\AgileworksPraktika\\Backend\\Domain\\Domain.csproj"
             }
           }
         }
@@ -105,7 +105,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.101\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\5.0.300\\RuntimeIdentifierGraph.json"
       }
     }
   }
