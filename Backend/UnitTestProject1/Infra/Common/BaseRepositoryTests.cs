@@ -11,7 +11,6 @@ namespace Tests.Infra.Common
     public class BaseRepositoryTests : BaseClassTests<BaseRepository<Feedback, FeedbackData>, object>
     {
         protected FeedbackData data;
-        protected GetRandom GetRandom;
         private class TestClass : BaseRepository<Feedback, FeedbackData>
         {
             public TestClass(DbContext c, DbSet<FeedbackData> s) : base(c, s)
@@ -46,7 +45,6 @@ namespace Tests.Infra.Common
             var options = new DbContextOptionsBuilder<FeedbackDbContext>().UseInMemoryDatabase("TestDb").Options;
             var c = new FeedbackDbContext(options);
             obj = new TestClass(c, c.FeedbackDatas);
-            GetRandom = new GetRandom();
             data = GetRandom.FeedbackData();
         }
 

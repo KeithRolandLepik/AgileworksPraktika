@@ -22,7 +22,8 @@ export default defineComponent({
 });
 </script>
 
-<style scoped lang="scss">$gray: rgba(28, 28, 30);
+<style scoped lang="scss">
+$gray: rgba(28, 28, 30);
 $gray1: rgba(34, 34, 36);
 $gray2: rgba(58, 58, 60);
 $gray3: rgba(72, 72, 74);
@@ -36,7 +37,7 @@ $gray5: rgba(142, 142, 147);
   justify-content: center;
   flex-direction: column;
   padding: 50px;
-  background:$gray;
+  background: $gray;
   .header {
     width: 50%;
     display: flex;

@@ -8,14 +8,12 @@ namespace Tests.Facade.Feedbacks
     public class FeedbackViewTests : BaseClassTests<FeedbackView, DefinedEntityView>
     {
         private class TestClass : FeedbackView { }
-        private GetRandom GetRandom;
         [TestInitialize]
         public override void TestInitialize()
         {
             base.TestInitialize();
             obj = new TestClass();
-            GetRandom = new GetRandom();
-
+            
         }
         [TestMethod]
         public void DueDateTest()

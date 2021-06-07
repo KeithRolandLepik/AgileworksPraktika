@@ -17,7 +17,6 @@ namespace Tests.Soft.Controllers
     [TestClass]
     public class FeedbackControllerTests : BaseClassTests<FeedbackController, ControllerBase>
     {
-        protected GetRandom GetRandom;
         protected FeedbackDbContext db;
         protected IFeedbackRepository repo;
         protected int count;
@@ -26,7 +25,6 @@ namespace Tests.Soft.Controllers
         public override void TestInitialize()
         {
             base.TestInitialize();
-            GetRandom = new GetRandom();
 
             var options = new DbContextOptionsBuilder<FeedbackDbContext>().UseInMemoryDatabase("TestDb").Options;
             db = new FeedbackDbContext(options);

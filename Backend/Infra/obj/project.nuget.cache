@@ -1,12 +1,12 @@
 {
   "version": 2,
-  "dgSpecHash": "2mde6WN+ZjhKSeYbYO2ikRW87ybOO5ITSaKvNRzw8wGEX+gMKVgjlymPt5I6YgqYkHlQMVAMr/4jLUeWQumOnQ==",
+  "dgSpecHash": "EBv5ZccT2iyHGXMJQp32Uw93aQmO1TRQk8DPOmZl1Da7ZvMMJ7GpCA1thc4Z4QyLgfdLXT5FNH7kzXNwdCLUyA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\KeithRolandLepik\\Source\\Repos\\KeithRolandLepik\\AgileworksPraktika\\Backend\\Infra\\Infra.csproj",
+  "projectFilePath": "C:\\Users\\KeithRolandLepik\\source\\repos\\KeithRolandLepik\\AgileworksPraktika\\Backend\\Infra\\Infra.csproj",
   "expectedPackageFiles": [
-    "C:\\Users\\KeithRolandLepik\\.nuget\\packages\\microsoft.entityframeworkcore\\5.0.5\\microsoft.entityframeworkcore.5.0.5.nupkg.sha512",
-    "C:\\Users\\KeithRolandLepik\\.nuget\\packages\\microsoft.entityframeworkcore.abstractions\\5.0.5\\microsoft.entityframeworkcore.abstractions.5.0.5.nupkg.sha512",
-    "C:\\Users\\KeithRolandLepik\\.nuget\\packages\\microsoft.entityframeworkcore.analyzers\\5.0.5\\microsoft.entityframeworkcore.analyzers.5.0.5.nupkg.sha512",
+    "C:\\Users\\KeithRolandLepik\\.nuget\\packages\\microsoft.entityframeworkcore\\5.0.6\\microsoft.entityframeworkcore.5.0.6.nupkg.sha512",
+    "C:\\Users\\KeithRolandLepik\\.nuget\\packages\\microsoft.entityframeworkcore.abstractions\\5.0.6\\microsoft.entityframeworkcore.abstractions.5.0.6.nupkg.sha512",
+    "C:\\Users\\KeithRolandLepik\\.nuget\\packages\\microsoft.entityframeworkcore.analyzers\\5.0.6\\microsoft.entityframeworkcore.analyzers.5.0.6.nupkg.sha512",
     "C:\\Users\\KeithRolandLepik\\.nuget\\packages\\microsoft.extensions.caching.abstractions\\5.0.0\\microsoft.extensions.caching.abstractions.5.0.0.nupkg.sha512",
     "C:\\Users\\KeithRolandLepik\\.nuget\\packages\\microsoft.extensions.caching.memory\\5.0.0\\microsoft.extensions.caching.memory.5.0.0.nupkg.sha512",
     "C:\\Users\\KeithRolandLepik\\.nuget\\packages\\microsoft.extensions.dependencyinjection\\5.0.1\\microsoft.extensions.dependencyinjection.5.0.1.nupkg.sha512",

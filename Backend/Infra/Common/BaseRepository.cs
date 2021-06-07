@@ -22,18 +22,8 @@ namespace Infra.Common
 
         public virtual async Task<List<TDomain>> Get()
         {
-            var query = createSqlQuery();
-            var set = await runSqlQueryASync(query);
-
-            return toDomainObjectsList(set);
-        }
-
-        internal async Task<List<TData>> runSqlQueryASync(IQueryable<TData> query) => await query.AsNoTracking().ToListAsync();
-
-        protected internal virtual IQueryable<TData> createSqlQuery()
-        {
-            var query = from s in dbSet select s;
-            return query;
+            var query = dbSet.AsQueryable();
+            return toDomainObjectsList(await query.ToListAsync());
         }
 
         public async Task<TDomain> Get(int id)
@@ -47,8 +37,6 @@ namespace Infra.Common
             return obj;
         }
 
-        protected TData getData(TDomain obj) => obj.Data;
-
 
         public async Task Delete(int id)
         {
@@ -58,18 +46,30 @@ namespace Infra.Common
             var d = await getData(id);
 
             if (d is null) return;
-            dbSet.Remove(d);
-            await db.SaveChangesAsync();
+        
+            try
+            {
+                dbSet.Remove(d);
+                await db.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException){} 
         }
 
         public async Task<TDomain> Add(TDomain obj)
         {
             if (obj?.Data is null) return new TDomain();
-            dbSet.Add(obj.Data);
-            await db.SaveChangesAsync();
+
+            try
+            {
+                dbSet.Add(obj.Data);
+                await db.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+
+            }
             
             var o = await Get(obj.Data.Id);
-            
             return o;
         }
 
@@ -82,7 +82,6 @@ namespace Infra.Common
             var d = getData(obj);
             d = copyData(d);
 
-            
             db.Attach(d).State = EntityState.Modified;
 
             try { await db.SaveChangesAsync(); }
@@ -93,19 +92,21 @@ namespace Infra.Common
 
         }
 
-        protected abstract TDomain unspecifiedEntity();
-
-        public object GetById(int id) => Get(id).GetAwaiter().GetResult(); 
-
         protected async Task<TData> getData(int id)
         => await dbSet.FirstOrDefaultAsync(m => m.Id == id);
-        protected abstract TData copyData(TData d);
 
         protected TData getDataById(TData d)
             => dbSet.Find(d.Id);
+   
         internal List<TDomain> toDomainObjectsList(List<TData> set) => set.Select(toDomainObject).ToList();
 
+        protected TData getData(TDomain obj) => obj.Data;
+
+        protected abstract TData copyData(TData d);
+
         protected internal abstract TDomain toDomainObject(TData UniqueEntityData);
+
+        protected abstract TDomain unspecifiedEntity();
 
     }
 }

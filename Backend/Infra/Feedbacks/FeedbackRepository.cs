@@ -13,13 +13,7 @@ namespace Infra.Feedbacks
 
         protected internal override Feedback toDomainObject(FeedbackData d) => new Feedback(d);
         protected override Feedback unspecifiedEntity() => new Feedback();
-        public async override Task<List<Feedback>> Get()
-        {
-            var query = createSqlQuery();
-            var set = await runSqlQueryASync(query.OrderBy(x=>x.DueDate));
-            
-            return toDomainObjectsList(set);
-        }
+
         protected override FeedbackData copyData(FeedbackData d)
         {
             var x = getDataById(d);
