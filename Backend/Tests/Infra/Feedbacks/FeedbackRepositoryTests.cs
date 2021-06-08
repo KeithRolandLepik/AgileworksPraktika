@@ -31,8 +31,8 @@
 //        }
 
 //        [TestCleanup] public void TestCleanup() => cleanDbSet();
-//        [TestMethod] public void IsSealedTest() => Assert.IsTrue(type.IsSealed); 
-        
+//        [TestMethod] public void IsSealedTest() => Assert.IsTrue(type.IsSealed);
+
 
 //        private void addItems()
 //        {

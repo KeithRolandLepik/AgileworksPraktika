@@ -1,6 +1,7 @@
 ﻿using Data.Common;
 using Domain.Common;
-using Microsoft.EntityFrameworkCore;
+using Marten;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,102 +12,58 @@ namespace Infra.Common
             ICrudMethods<TDomain> where TData : UniqueEntityData, new()
             where TDomain : Entity<TData>, new()
     {
-        protected internal DbContext db;
-        protected internal DbSet<TData> dbSet;
+        private IDocumentSession _documentSession;
+        
 
-        protected BaseRepository(DbContext c, DbSet<TData> s)
+        protected BaseRepository(IDocumentSession documentSession)
         {
-            db = c;
-            dbSet = s;
+            _documentSession = documentSession;
         }
 
-        public virtual async Task<List<TDomain>> Get()
+        public async Task<List<TDomain>> Get()
         {
-            var query = dbSet.AsQueryable();
-            return toDomainObjectsList(await query.ToListAsync());
+            var list = await _documentSession.Query<TData>().ToListAsync();
+
+            return toDomainObjectsList(list);
         }
 
         public async Task<TDomain> Get(int id)
         {
-            if (id is default(int)) return new TDomain();
+            var d = await _documentSession.Query<TData>().FirstOrDefaultAsync(x => x.Id == id);
 
-            var d = await getData(id);
-            if (d is null) return unspecifiedEntity();
-
-            var obj = toDomainObject(d);
-            return obj;
+            return toDomainObject(d);
         }
 
 
         public async Task Delete(int id)
         {
-
-            if (id is default(int)) return;
-
-            var d = await getData(id);
-
-            if (d is null) return;
-        
-            try
-            {
-                dbSet.Remove(d);
-                await db.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException){} 
+            _documentSession.Delete<TData>(id);
+            await _documentSession.SaveChangesAsync();
         }
 
         public async Task<TDomain> Add(TDomain obj)
         {
-            if (obj?.Data is null) return new TDomain();
-
-            try
-            {
-                dbSet.Add(obj.Data);
-                await db.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-
-            }
+            _documentSession.Store(obj.Data);
             
-            var o = await Get(obj.Data.Id);
-            return o;
+            await _documentSession.SaveChangesAsync();
+
+            var d = await _documentSession.Query<TData>().FirstOrDefaultAsync(x => x.Id == obj.Data.Id);
+            
+            return toDomainObject(d);
         }
 
         public async Task Update(TDomain obj)
         {
-            if(obj.Data is null)
-            {
-                return;
-            }
-            var d = getData(obj);
-            d = copyData(d);
+            _documentSession.Store<TData>(obj.Data);
 
-            db.Attach(d).State = EntityState.Modified;
-
-            try { await db.SaveChangesAsync(); }
-            catch (DbUpdateConcurrencyException)
-            {
-
-            }
-
+            await _documentSession.SaveChangesAsync();
         }
 
-        protected async Task<TData> getData(int id)
-        => await dbSet.FirstOrDefaultAsync(m => m.Id == id);
+        protected abstract TData copyData(TData data);
 
-        protected TData getDataById(TData d)
-            => dbSet.Find(d.Id);
-   
-        internal List<TDomain> toDomainObjectsList(List<TData> set) => set.Select(toDomainObject).ToList();
-
-        protected TData getData(TDomain obj) => obj.Data;
-
-        protected abstract TData copyData(TData d);
+        internal List<TDomain> toDomainObjectsList(IEnumerable<TData> set) => set.Select(toDomainObject).ToList();
 
         protected internal abstract TDomain toDomainObject(TData UniqueEntityData);
-
-        protected abstract TDomain unspecifiedEntity();
 
     }
 }

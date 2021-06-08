@@ -2,49 +2,59 @@
 using Domain.Feedbacks;
 using Infra.Common;
 using Infra.Feedbacks;
+using Marten;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 
 namespace Tests.Infra.Common
 {
     [TestClass]
-    public class BaseRepositoryTests : BaseClassTests<BaseRepository<Feedback, FeedbackData>, object>
+    public class BaseRepositoryTests : BaseTests
     {
         protected FeedbackData data;
-        private class TestClass : BaseRepository<Feedback, FeedbackData>
-        {
-            public TestClass(DbContext c, DbSet<FeedbackData> s) : base(c, s)
-            {
 
+        //private IServiceScope _serviceScope;
+        //protected IServiceProvider ServiceProvider
+        //=> _serviceScope.ServiceProvider;
+        //protected IDocumentSession _documentSession => ServiceProvider.GetRequiredService<IDocumentSession>();
+        
+        internal class TestClass : BaseRepository<Feedback, FeedbackData>
+        {
+            public TestClass(IDocumentSession documentSession) : base(documentSession)
+            {
             }
 
             protected override FeedbackData copyData(FeedbackData d)
             {
-                var x = getDataById(d);
-
-                if (x is null) return d;
-
-                x.Id = d.Id;
-                x.DueDate = d.DueDate;
-                x.DateAdded = d.DateAdded;
-                x.Overdue = d.Overdue;
-                x.Completed = d.Completed;
-                x.Description = d.Description;
+                var x = new FeedbackData
+                {
+                    Id = d.Id,
+                    DueDate = d.DueDate,
+                    DateAdded = d.DateAdded,
+                    Overdue = d.Overdue,
+                    Completed = d.Completed,
+                    Description = d.Description
+                };
 
                 return x;
             }
 
             protected override Feedback toDomainObject(FeedbackData d) => new Feedback(d);
 
-            protected override Feedback unspecifiedEntity() => new Feedback();
         }
+
+        private IDocumentSession _documentSession;
+        internal TestClass obj;
+
         [TestInitialize]
-        public override void TestInitialize()
+        public void TestInitialize(IDocumentSession documentSession)
         {
-            base.TestInitialize();
-            var options = new DbContextOptionsBuilder<FeedbackDbContext>().UseInMemoryDatabase("TestDb").Options;
-            var c = new FeedbackDbContext(options);
-            obj = new TestClass(c, c.FeedbackDatas);
+            _documentSession = documentSession;
+
+            obj = new TestClass(_documentSession);
+            
             data = GetRandom.FeedbackData();
         }
 
@@ -95,7 +105,7 @@ namespace Tests.Infra.Common
             newData.DateAdded = newData.DateAdded.Date;
             obj.Update(new Feedback(newData)).GetAwaiter();
             var expected = obj.Get(data.Id).GetAwaiter().GetResult();
-            expected.Data.DateAdded = expected.Data.DateAdded.Date; 
+            expected.Data.DateAdded = expected.Data.DateAdded.Date;
             TestArePropertyValuesEqual(expected.Data, newData);
 
         }

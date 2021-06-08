@@ -44,16 +44,13 @@ namespace Facade.Feedbacks
             };
             return new Feedback(d);
         }
-        public static Feedback MapToDomainFromUpdate(FeedbackUpdate update)
+        public static Feedback MapToDomainFromUpdate(Feedback feedbackToUpdate, FeedbackUpdate update)
         {
-            var d = new FeedbackData
-            {
-                Description = update.Description,
-                DueDate = update.DueDate,
-                Completed = update.Completed,
-                DateAdded = DateTime.Now,
-            };
-            return new Feedback(d);
+            feedbackToUpdate.Data.Description = update.Description;
+            feedbackToUpdate.Data.DueDate = update.DueDate;
+            feedbackToUpdate.Data.Completed = update.Completed;
+
+            return feedbackToUpdate;
         }
     }
 }

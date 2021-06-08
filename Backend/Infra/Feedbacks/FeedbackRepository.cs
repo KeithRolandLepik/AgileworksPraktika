@@ -9,62 +9,24 @@ using System.Threading.Tasks;
 
 namespace Infra.Feedbacks
 {
-    public sealed class FeedbackRepository:  IFeedbackRepository
+    public sealed class FeedbackRepository:  BaseRepository<Feedback, FeedbackData>, IFeedbackRepository
     {
+        public FeedbackRepository(IDocumentSession session): base(session) { }
 
-        private IDocumentSession _documentSession;
-        public FeedbackRepository([FromServices] IDocumentSession documentSession)
+        protected override FeedbackData copyData(FeedbackData data)
         {
-            _documentSession = documentSession;
-        }
-        public async Task<Feedback> Add(Feedback obj)
-        {
-            _documentSession.Store(obj.Data);
-            await _documentSession.SaveChangesAsync();
-            var d = await _documentSession.Query<FeedbackData>().FirstOrDefaultAsync(x => x.Id == obj.Data.Id);
-            return toDomainObject(d);
-        }
-
-        public async Task Delete(int id)
-        {
-            _documentSession.Delete(id);
-
-            await _documentSession.SaveChangesAsync();
+            var x = new FeedbackData();
+            x.Id = data.Id;
+            x.DueDate = data.DueDate;
+            x.Description = data.Description;
+            x.DateAdded = data.DateAdded;
+            x.Completed = data.Completed;
+            x.Overdue = data.Overdue;
+            return x;
         }
 
-        public async Task<List<Feedback>> Get()
-        {
-            var list = await _documentSession.Query<FeedbackData>().ToListAsync();
-
-            return toDomainObjectsList(list);
-        }
-
-        public async Task<Feedback> Get(int id)
-        {
-            var d = await _documentSession.Query<FeedbackData>().FirstOrDefaultAsync(x => x.Id == id);
-
-            return new Feedback(d);
-
-        }
-
-        public async Task Update(Feedback obj)
-        {
-            _documentSession.Store<FeedbackData>(obj.Data);
-
-            await _documentSession.SaveChangesAsync();
-        }
+        protected internal override Feedback toDomainObject(FeedbackData d) => new Feedback(d);
 
 
-        private List<Feedback> toDomainObjectsList(IEnumerable<FeedbackData> datas)
-        {
-            var l = new List<Feedback>();
-            foreach(var e in datas)
-            {
-                l.Add(toDomainObject(e));
-            }
-            return l;
-        }
-
-        private Feedback toDomainObject(FeedbackData d) => new Feedback(d);
     }
 }

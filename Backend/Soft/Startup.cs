@@ -65,9 +65,6 @@ namespace Soft
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-
-            //services.AddDbContext<FeedbackDbContext>(OptionsBuilderConfigurationExtensions => OptionsBuilderConfigurationExtensions.UseNpgsql(Configuration.GetConnectionString("Default")));
-
             services.AddMarten(options =>
             {
                 // Establish the connection string to your Marten database
@@ -86,12 +83,6 @@ namespace Soft
                     .AllowAnyMethod()
                     .AllowAnyHeader();
             }));
-            //services.AddScoped<IFeedbackRepository>(serviceProvider => 
-            //new LoggerDecorator(
-            //    new FeedbackRepository(
-            //        serviceProvider.GetRequiredService<FeedbackDbContext>())));
-
-            //services.AddSingleton<IFeedbackRepository, FeedbackRepository>();
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
@@ -103,10 +94,6 @@ namespace Soft
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            //using (var scope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
-            //using (var context = scope.ServiceProvider.GetService<FeedbackDbContext>())
-            //    context.Database.EnsureCreated();
-
 
             if (env.IsDevelopment())
             {

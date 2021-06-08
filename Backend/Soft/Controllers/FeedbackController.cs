@@ -44,16 +44,14 @@ namespace Soft.Controllers
         {
             if (feedbackUpdate.Description == null || feedbackUpdate.DueDate == default) return BadRequest();
 
-            var updatedFeedback = FeedbackMapper.MapToDomainFromUpdate(feedbackUpdate);
-
-            updatedFeedback.Data.Id = id;
-
             var feedbackToUpdate = await _repository.Get(id);
 
             if (feedbackToUpdate.Data == null)
                 return BadRequest();
+            
+            FeedbackMapper.MapToDomainFromUpdate(feedbackToUpdate, feedbackUpdate);
 
-            await _repository.Update(updatedFeedback);
+            await _repository.Update(FeedbackMapper.MapToDomainFromUpdate(feedbackToUpdate, feedbackUpdate));
 
             return Ok();
         }
