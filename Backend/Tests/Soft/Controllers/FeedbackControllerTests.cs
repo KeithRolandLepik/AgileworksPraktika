@@ -8,8 +8,6 @@ using Data.Feedbacks;
 using Infra.Feedbacks;
 using Microsoft.EntityFrameworkCore;
 using Facade.Feedbacks;
-using System.Net.Http;
-using System.Web.Http;
 using Domain.Feedbacks;
 
 namespace Tests.Soft.Controllers

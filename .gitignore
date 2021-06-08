@@ -364,3 +364,10 @@ FodyWeavers.xsd
 # Rider
 .idea/
 
+/Backend/Data/obj
+/Backend/Domain/obj
+/Backend/Facade/obj
+/Backend/Infra/obj
+/Backend/Soft/obj
+/Backend/Tests/obj
+/Backend/TestResults
