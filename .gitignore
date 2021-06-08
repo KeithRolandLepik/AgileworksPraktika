@@ -360,3 +360,14 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# Rider
+.idea/
+
+/Backend/Data/obj
+/Backend/Domain/obj
+/Backend/Facade/obj
+/Backend/Soft/obj
+/Backend/TestResults
+/Backend/Infra/obj
+/Backend/Tests/obj
