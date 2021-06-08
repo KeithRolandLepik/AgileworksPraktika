@@ -14,9 +14,9 @@ namespace Soft.Controllers
     public class FeedbackController : ControllerBase
     {
         private readonly IFeedbackRepository _repository;
-        public FeedbackController(IFeedbackRepository iRepository)
+        public FeedbackController(IFeedbackRepository Repository)
         {
-            _repository = iRepository;
+            _repository = Repository;
         }
 
         [HttpGet]
