@@ -1,10 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Infra.Feedbacks;
 using Domain.Feedbacks;
 using Facade.Feedbacks;
-using System;
 using System.Linq;
 
 namespace Soft.Controllers

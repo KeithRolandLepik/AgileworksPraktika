@@ -1,7 +1,6 @@
 ﻿using Data.Common;
 using Domain.Common;
 using Marten;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,9 +11,8 @@ namespace Infra.Common
             ICrudMethods<TDomain> where TData : UniqueEntityData, new()
             where TDomain : Entity<TData>, new()
     {
-        private IDocumentSession _documentSession;
+        private readonly IDocumentSession _documentSession;
         
-
         protected BaseRepository(IDocumentSession documentSession)
         {
             _documentSession = documentSession;
@@ -33,7 +31,6 @@ namespace Infra.Common
 
             return toDomainObject(d);
         }
-
 
         public async Task Delete(int id)
         {

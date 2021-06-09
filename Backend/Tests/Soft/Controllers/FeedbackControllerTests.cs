@@ -9,13 +9,15 @@
 //using Microsoft.EntityFrameworkCore;
 //using Facade.Feedbacks;
 //using Domain.Feedbacks;
+//using Tests.Infra.Common;
 
 //namespace Tests.Soft.Controllers
 //{
 //    [TestClass]
-//    public class FeedbackControllerTests : BaseClassTests<FeedbackController, ControllerBase>
+//    public class FeedbackControllerTests : RepositoryTests
 //    {
 //        protected IFeedbackRepository repo;
+//        protected FeedbackController obj;
 //        protected int count;
 
 //        [TestInitialize]
@@ -23,9 +25,7 @@
 //        {
 //            base.TestInitialize();
 
-//            var options = new DbContextOptionsBuilder<FeedbackDbContext>().UseInMemoryDatabase("TestDb").Options;
-//            db = new FeedbackDbContext(options);
-//            repo = new FeedbackRepository(db);
+//            repo = new FeedbackRepository(_documentSession);
 //            obj = new FeedbackController(repo);
 
 //            count = GetRandom.RndInteger(5, 10);
@@ -37,7 +37,7 @@
 //        {
 //            var results = obj.GetFeedbacks().GetAwaiter().GetResult();
 
-//            Assert.AreEqual(results.Value.Count, db.FeedbackDatas.CountAsync().GetAwaiter().GetResult());
+//            Assert.AreEqual(results.Value.Count, repo.Get().GetAwaiter().GetResult().Count);
 //        }
 
 //        [TestMethod]
@@ -60,7 +60,7 @@
 //            var id = GetRandom.RndInteger(500, 1000);
 //            var updateData1 = new FeedbackUpdate
 //            {
-//                Completed= true,
+//                Completed = true,
 //                Description = "newTest",
 //                DueDate = GetRandom.Datetime()
 //            };
@@ -86,14 +86,14 @@
 //            Assert.AreEqual(put.GetType(), typeof(BadRequestResult));
 
 
-//            var updateData4  = new FeedbackUpdate
+//            var updateData4 = new FeedbackUpdate
 //            {
 //                Completed = false
 //            };
 //            put = obj.PutFeedback(id, updateData4).GetAwaiter().GetResult();
 //            Assert.AreEqual(put.GetType(), typeof(BadRequestResult));
 
-            
+
 //            put = obj.PutFeedback(id, updateData1).GetAwaiter().GetResult();
 //            Assert.AreEqual(put.GetType(), typeof(OkResult));
 //        }
@@ -137,7 +137,7 @@
 //        {
 //            for (int i = 0; i < count; i++)
 //            {
-//                var inputData = new FeedbackInput { Description = "test" + i.ToString(), DueDate = GetRandom.Datetime()};
+//                var inputData = new FeedbackInput { Description = "test" + i.ToString(), DueDate = GetRandom.Datetime() };
 //                obj.PostFeedback(inputData).GetAwaiter();
 //            }
 //        }

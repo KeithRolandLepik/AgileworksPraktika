@@ -2,30 +2,19 @@
 using Domain.Feedbacks;
 using Infra.Common;
 using Marten;
-using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using Soft;
-using Tests.Common;
-using Microsoft.Extensions.Hosting;
-using Weasel.Postgresql;
 
 namespace Tests.Infra.Common
 {
     [TestClass]
-    public class BaseRepositoryTests : BaseTests
+    public class BaseRepositoryTests : RepositoryTests
     {
         protected FeedbackData data;
-        
-        
-        private IDocumentSession _documentSession;
-        //private IDocumentSession _documentSession => _services.GetRequiredService<IDocumentSession>();
-        internal class TestClass : BaseRepository<Feedback, FeedbackData>
+        private TestClass obj;
+
+        private class TestClass : BaseRepository<Feedback, FeedbackData>
         {
-            public TestClass(IDocumentSession documentSession) : base(documentSession)
-            {
-                
-            }
+            public TestClass(IDocumentSession documentSession) : base(documentSession){}
 
             protected override FeedbackData copyData(FeedbackData d)
             {
@@ -38,7 +27,6 @@ namespace Tests.Infra.Common
                     Completed = d.Completed,
                     Description = d.Description
                 };
-
                 return x;
             }
 
@@ -46,33 +34,12 @@ namespace Tests.Infra.Common
 
         }
         
-        internal TestClass obj;
-        private DatabaseFixture _databaseFixture;
-
-        private IServiceProvider _services;
         [TestInitialize]
-        public void TestInitialize()
+        public override void TestInitialize()
         {
-            _databaseFixture = new DatabaseFixture(
-            TestConnectionStringSource.GenerateConnectionString());
-
-            _services = Program.CreateHostBuilder(Array.Empty<string>())
-            .ConfigureServices(services => services.AddMarten(options =>
-            {
-                options.Connection(_databaseFixture.ConnectionString);
-                options.AutoCreateSchemaObjects = AutoCreate.All;
-            })).Build().Services;
-
-            _documentSession = _services.GetRequiredService<IDocumentSession>();
-
+            base.TestInitialize();
             obj = new TestClass(_documentSession);
-            
             data = GetRandom.FeedbackData();
-        }
-        [TestCleanup]
-        public void Cleanup()
-        {
-            _databaseFixture.Dispose();
         }
         [TestMethod]
         public void GetTest()

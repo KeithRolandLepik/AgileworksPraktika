@@ -2,10 +2,6 @@
 using Domain.Feedbacks;
 using Infra.Common;
 using Marten;
-using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Infra.Feedbacks
 {
@@ -26,7 +22,5 @@ namespace Infra.Feedbacks
         }
 
         protected internal override Feedback toDomainObject(FeedbackData d) => new Feedback(d);
-
-
     }
 }
