@@ -85,7 +85,7 @@ public static class TestConnectionStringSource
         var builder =
             new NpgsqlConnectionStringBuilder(connectionString:
                 Environment.GetEnvironmentVariable("TestConnectionString")
-                ?? $"server=localhost;Port=5432;userid=postgres;password=password")
+                ?? $"server=localhost;Port=5432;userid=postgres;password=parool")
             {
                 Database = "tests-db-" + Guid.NewGuid().ToString().ToLower(),
                 Enlist = true

@@ -7,6 +7,8 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using Soft;
 using Tests.Common;
+using Microsoft.Extensions.Hosting;
+using Weasel.Postgresql;
 
 namespace Tests.Infra.Common
 {
@@ -15,10 +17,9 @@ namespace Tests.Infra.Common
     {
         protected FeedbackData data;
         
-        private IServiceProvider _services = Program.CreateHostBuilder(Array.Empty<string>()).Build().Services;
-
-        private IDocumentSession _documentSession => _services.GetRequiredService<IDocumentSession>();
         
+        private IDocumentSession _documentSession;
+        //private IDocumentSession _documentSession => _services.GetRequiredService<IDocumentSession>();
         internal class TestClass : BaseRepository<Feedback, FeedbackData>
         {
             public TestClass(IDocumentSession documentSession) : base(documentSession)
@@ -48,11 +49,21 @@ namespace Tests.Infra.Common
         internal TestClass obj;
         private DatabaseFixture _databaseFixture;
 
+        private IServiceProvider _services;
         [TestInitialize]
         public void TestInitialize()
         {
             _databaseFixture = new DatabaseFixture(
             TestConnectionStringSource.GenerateConnectionString());
+
+            _services = Program.CreateHostBuilder(Array.Empty<string>())
+            .ConfigureServices(services => services.AddMarten(options =>
+            {
+                options.Connection(_databaseFixture.ConnectionString);
+                options.AutoCreateSchemaObjects = AutoCreate.All;
+            })).Build().Services;
+
+            _documentSession = _services.GetRequiredService<IDocumentSession>();
 
             obj = new TestClass(_documentSession);
             
