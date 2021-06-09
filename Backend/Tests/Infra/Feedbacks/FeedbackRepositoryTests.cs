@@ -1,9 +1,6 @@
 ﻿using Data.Feedbacks;
-using Domain.Feedbacks;
 using Infra.Feedbacks;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using Tests.Infra.Common;
 
 namespace Tests.Infra.Feedbacks

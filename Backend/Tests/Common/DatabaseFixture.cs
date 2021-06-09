@@ -6,7 +6,7 @@ namespace Tests.Common
     public class DatabaseFixture : IDisposable
     {
         public string ConnectionString { get; private set; }
-        private NpgsqlConnectionStringBuilder ConnectionStringAsBuilder => new NpgsqlConnectionStringBuilder(ConnectionString);
+        internal NpgsqlConnectionStringBuilder ConnectionStringAsBuilder => new NpgsqlConnectionStringBuilder(ConnectionString);
         public NpgsqlConnection NpgsqlConnection { get; }
         public DatabaseFixture(string initialConnectionString)
         {
@@ -22,13 +22,13 @@ namespace Tests.Common
             NpgsqlConnection = new NpgsqlConnection(ConnectionString);
             NpgsqlConnection.Open();
         }
-        private string GetConnectionString(Action<NpgsqlConnectionStringBuilder> options)
+        internal string GetConnectionString(Action<NpgsqlConnectionStringBuilder> options)
         {
             var connectionStringBuilder = new NpgsqlConnectionStringBuilder(ConnectionString);
             options(connectionStringBuilder);
             return connectionStringBuilder.ConnectionString;
         }
-        private void CreateDatabase()
+        internal void CreateDatabase()
         {
             var baseConnection = GetConnectionString(builder => builder.Database = null);
             using (var connection = new NpgsqlConnection(baseConnection))
@@ -51,7 +51,7 @@ namespace Tests.Common
             DropDatabase();
         }
 
-        private void DropDatabase()
+        internal void DropDatabase()
         {
             using (var connection = new NpgsqlConnection(ConnectionString))
             {
