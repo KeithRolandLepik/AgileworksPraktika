@@ -75,7 +75,7 @@ namespace Tests.Infra.Common
             var expected = obj.Get(data.Id).GetAwaiter().GetResult();
             TestArePropertyValuesEqual(expected.Data, data);
 
-            obj.Delete(data.Id).GetAwaiter();
+            obj.Delete(data.Id).GetAwaiter().GetResult();
             var newCount = obj.Get().GetAwaiter().GetResult().Count;
             expected = obj.Get(data.Id).GetAwaiter().GetResult();
 
@@ -89,19 +89,26 @@ namespace Tests.Infra.Common
             Assert.IsNull(expected.Data);
             expected = obj.Add(new Feedback(data)).GetAwaiter().GetResult();
             TestArePropertyValuesEqual(expected.Data, data);
+            data = expected.Data;
 
         }
         [TestMethod]
         public void UpdateTest()
         {
-            var newData = GetRandom.FeedbackData();
             AddTest();
-            newData.Id = data.Id;
-            newData.DateAdded = newData.DateAdded.Date;
-            obj.Update(new Feedback(newData)).GetAwaiter();
-            var expected = obj.Get(data.Id).GetAwaiter().GetResult();
-            expected.Data.DateAdded = expected.Data.DateAdded.Date;
-            TestArePropertyValuesEqual(expected.Data, newData);
+            var newData = GetRandom.FeedbackData();
+            var entityToUpdate = obj.Get(data.Id).GetAwaiter().GetResult();
+
+            entityToUpdate.Data.DueDate = newData.DueDate;
+            entityToUpdate.Data.Completed = newData.Completed;
+            entityToUpdate.Data.DateAdded = newData.DateAdded;
+            entityToUpdate.Data.Description = newData.Description;
+            entityToUpdate.Data.Overdue = newData.Overdue;
+
+            obj.Update(entityToUpdate).GetAwaiter().GetResult();
+            var expected = obj.Get(entityToUpdate.Data.Id).GetAwaiter().GetResult();
+
+            TestArePropertyValuesEqual(expected.Data, entityToUpdate.Data);
 
         }
     }

@@ -71,6 +71,8 @@ namespace Soft
                 options.Connection(Configuration.GetConnectionString("Default"));
                 
                 options.AutoCreateSchemaObjects = AutoCreate.All;
+
+                
             });
 
             services.AddScoped<IFeedbackRepository, FeedbackRepository>();
