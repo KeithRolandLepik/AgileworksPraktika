@@ -69,7 +69,11 @@ namespace Tests.Infra.Common
             
             data = GetRandom.FeedbackData();
         }
-
+        [TestCleanup]
+        public void Cleanup()
+        {
+            _databaseFixture.Dispose();
+        }
         [TestMethod]
         public void GetTest()
         {
