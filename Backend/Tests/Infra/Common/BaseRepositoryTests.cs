@@ -6,6 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using Soft;
+using Tests.Common;
 
 namespace Tests.Infra.Common
 {
@@ -15,6 +16,7 @@ namespace Tests.Infra.Common
         protected FeedbackData data;
         
         private IServiceProvider _services = Program.CreateHostBuilder(Array.Empty<string>()).Build().Services;
+
         private IDocumentSession _documentSession => _services.GetRequiredService<IDocumentSession>();
         
         internal class TestClass : BaseRepository<Feedback, FeedbackData>
@@ -44,10 +46,14 @@ namespace Tests.Infra.Common
         }
         
         internal TestClass obj;
+        private DatabaseFixture _databaseFixture;
 
         [TestInitialize]
         public void TestInitialize()
         {
+            _databaseFixture = new DatabaseFixture(
+            TestConnectionStringSource.GenerateConnectionString());
+
             obj = new TestClass(_documentSession);
             
             data = GetRandom.FeedbackData();
@@ -109,7 +115,6 @@ namespace Tests.Infra.Common
             var expected = obj.Get(entityToUpdate.Data.Id).GetAwaiter().GetResult();
 
             TestArePropertyValuesEqual(expected.Data, entityToUpdate.Data);
-
         }
     }
 }
