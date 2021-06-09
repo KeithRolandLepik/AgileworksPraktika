@@ -14,7 +14,7 @@ namespace Tests.Infra.Common
 
         private class TestClass : BaseRepository<Feedback, FeedbackData>
         {
-            public TestClass(IDocumentSession documentSession) : base(documentSession){}
+            public TestClass(IDocumentSession documentSession) : base(documentSession) { }
 
             protected override FeedbackData copyData(FeedbackData d)
             {
@@ -33,11 +33,11 @@ namespace Tests.Infra.Common
             protected override Feedback toDomainObject(FeedbackData d) => new Feedback(d);
 
         }
-        
+
         [TestInitialize]
-        public override void TestInitialize()
+        public void TestInitialize()
         {
-            base.TestInitialize();
+            InitializeTestDatabase();
             obj = new TestClass(_documentSession);
             data = GetRandom.FeedbackData();
         }

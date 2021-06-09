@@ -14,9 +14,9 @@ namespace Tests.Infra.Feedbacks
         protected int count;
 
         [TestInitialize]
-        public override void TestInitialize()
+        public void TestInitialize()
         {
-            base.TestInitialize();
+            InitializeTestDatabase();
             obj = new FeedbackRepository(_documentSession);
         }
     }

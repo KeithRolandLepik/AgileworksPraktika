@@ -1,6 +1,5 @@
 ﻿using Marten;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Soft;
 using System;
 using Tests.Common;
@@ -15,8 +14,7 @@ namespace Tests.Infra.Common
         internal IServiceProvider _services;
         internal IDocumentSession _documentSession;
 
-        [TestInitialize]
-        public virtual void TestInitialize()
+        public void InitializeTestDatabase()
         {
             _databaseFixture = new DatabaseFixture(
             TestConnectionStringSource.GenerateConnectionString());
@@ -30,10 +28,5 @@ namespace Tests.Infra.Common
 
             _documentSession = _services.GetRequiredService<IDocumentSession>();
         }
-        //[TestCleanup]
-        //public void Cleanup()
-        //{
-        //    _databaseFixture.Dispose();
-        //}
     }
 }
