@@ -1,12 +1,11 @@
 ﻿using Data.Feedbacks;
 using Domain.Feedbacks;
 using Infra.Common;
-using Infra.Feedbacks;
 using Marten;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using Soft;
 
 namespace Tests.Infra.Common
 {
@@ -14,16 +13,15 @@ namespace Tests.Infra.Common
     public class BaseRepositoryTests : BaseTests
     {
         protected FeedbackData data;
-
-        //private IServiceScope _serviceScope;
-        //protected IServiceProvider ServiceProvider
-        //=> _serviceScope.ServiceProvider;
-        //protected IDocumentSession _documentSession => ServiceProvider.GetRequiredService<IDocumentSession>();
+        
+        private IServiceProvider _services = Program.CreateHostBuilder(Array.Empty<string>()).Build().Services;
+        private IDocumentSession _documentSession => _services.GetRequiredService<IDocumentSession>();
         
         internal class TestClass : BaseRepository<Feedback, FeedbackData>
         {
             public TestClass(IDocumentSession documentSession) : base(documentSession)
             {
+                
             }
 
             protected override FeedbackData copyData(FeedbackData d)
@@ -44,15 +42,12 @@ namespace Tests.Infra.Common
             protected override Feedback toDomainObject(FeedbackData d) => new Feedback(d);
 
         }
-
-        private IDocumentSession _documentSession;
+        
         internal TestClass obj;
 
         [TestInitialize]
-        public void TestInitialize(IDocumentSession documentSession)
+        public void TestInitialize()
         {
-            _documentSession = documentSession;
-
             obj = new TestClass(_documentSession);
             
             data = GetRandom.FeedbackData();
