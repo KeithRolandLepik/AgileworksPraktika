@@ -1,11 +1,13 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using AutoFixture;
 
 namespace Tests
 {
     public abstract class BaseTests
     {
         protected Type Type;
+        public Fixture Fixture;
 
         protected static void AssertArePropertyValuesEqual(object obj1, object obj2)
         {

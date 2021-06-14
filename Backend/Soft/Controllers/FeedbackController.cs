@@ -59,7 +59,7 @@ namespace Soft.Controllers
                 return BadRequest();
 
             var feedback = FeedbackMapper.MapToDomainFromAddRequest(addFeedbackPost);
-            if (feedback.Data.DueDate < feedback.Data.DateAdded) return BadRequest();
+            //if (feedback.Data.DueDate < feedback.Data.DateAdded) return BadRequest();
             
             var result = await _repository.Add(feedback);
             if (result.Data == null) 

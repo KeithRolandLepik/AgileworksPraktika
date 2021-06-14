@@ -1,4 +1,5 @@
 ﻿using System;
+using AutoFixture;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Soft.Controllers;
 using Microsoft.AspNetCore.Mvc;
@@ -22,8 +23,8 @@ namespace Tests.Soft.Controllers
 
             Repository = new FeedbackRepository(DocumentStore);
             Controller = new FeedbackController(Repository);
-
-            Count = GetRandom.RndInteger(5, 10);
+            Fixture = new Fixture();
+            Count = 20;
             AddFeedbacks();
         }
 
@@ -40,7 +41,7 @@ namespace Tests.Soft.Controllers
         [TestMethod]
         public void GetFeedback_should_return_a_feedback_and_response_code()
         {
-            var id = GetRandom.RndInteger(500, 1000);
+            var id = Fixture.Create<int>();
 
             // Act
             var notFoundResult = Controller.GetFeedback(id).GetAwaiter().GetResult();
@@ -57,17 +58,17 @@ namespace Tests.Soft.Controllers
         [TestMethod]
         public void PutFeedback_should_return_a_okResult_if_successful_or_badRequest_if_unsuccessful()
         {
-            var id = GetRandom.RndInteger(9000, 90000); 
+            var id = Fixture.Create<int>();
             var updateData1 = new UpdateFeedbackRequest
             {
                 IsCompleted = true,
                 Description = "newTest1234141411",
-                DueDate = GetRandom.Datetime()
-            };
+                DueDate = Fixture.Create<DateTime>()
+        };
             var updateData2 = new UpdateFeedbackRequest
             {
-                DueDate = GetRandom.Datetime()
-            };
+                DueDate = Fixture.Create<DateTime>()
+    };
             var updateData3 = new UpdateFeedbackRequest
             {
                 Description = "newTest25151234351431234"
@@ -98,9 +99,10 @@ namespace Tests.Soft.Controllers
         [TestMethod]
         public void PostFeedback_should_return_createdAtActionResult_if_successful_or_badRequestResult_if_unSuccesful()
         {
-            var inputData1 = new AddFeedbackRequest { Description = "test", DueDate = GetRandom.Datetime(DateTime.Now.AddDays(1.0)) };
-            var inputData2 = new AddFeedbackRequest { Description = "test2" };
-            var inputData3 = new AddFeedbackRequest { DueDate = GetRandom.Datetime(DateTime.Now.AddDays(1.0)) };
+            var inputData1 = new AddFeedbackRequest { Description = Fixture.Create<string>(), DueDate = Fixture.Create<DateTime>()
+            };
+            var inputData2 = new AddFeedbackRequest { Description = Fixture.Create<string>() };
+            var inputData3 = new AddFeedbackRequest { DueDate = Fixture.Create<DateTime>() };
 
             // Act
             var result1 = Controller.PostFeedback(inputData1).GetAwaiter().GetResult();
@@ -121,7 +123,7 @@ namespace Tests.Soft.Controllers
             var id = results.Value[0].Id;
 
             // Act
-            var deleteResult = Controller.DeleteFeedback(GetRandom.RndInteger(500, 1000)).GetAwaiter().GetResult();
+            var deleteResult = Controller.DeleteFeedback(Fixture.Create<int>()).GetAwaiter().GetResult();
             var deleteResult2 = Controller.DeleteFeedback(id).GetAwaiter().GetResult();
             var countAfter = Controller.GetFeedbacks().GetAwaiter().GetResult().Value.Count;
             
@@ -135,7 +137,7 @@ namespace Tests.Soft.Controllers
         {
             for (int i = 0; i < Count; i++)
             {
-                var inputData = new AddFeedbackRequest { Description = "test" + i.ToString(), DueDate = GetRandom.Datetime() };
+                var inputData = new AddFeedbackRequest { Description = Fixture.Create<string>(), DueDate = Fixture.Create<DateTime>() };
                 var l = Repository.Add(FeedbackMapper.MapToDomainFromAddRequest(inputData)).GetAwaiter().GetResult();
             }
         }

@@ -1,6 +1,7 @@
 ﻿using Data.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using AutoFixture;
 
 namespace Tests.Data.Common
 {
@@ -14,6 +15,7 @@ namespace Tests.Data.Common
         {
             base.TestInitialize();
             Object = new TestClass();
+            Fixture = new Fixture();
         }
 
         [TestMethod]
@@ -26,7 +28,7 @@ namespace Tests.Data.Common
         [TestMethod]
         public void Id_should_be_gettable_and_settable()
         {
-            var randomValue = GetRandom.RndInteger(1, 10);
+            var randomValue = Fixture.Create<int>();
 
             // Act
             var initialIdValue = Object.Id;

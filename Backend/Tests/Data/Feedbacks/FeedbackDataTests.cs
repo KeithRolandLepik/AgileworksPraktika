@@ -1,4 +1,6 @@
-﻿using Data.Common;
+﻿using System;
+using AutoFixture;
+using Data.Common;
 using Data.Feedbacks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -14,12 +16,13 @@ namespace Tests.Data.Feedbacks
         {
             base.TestInitialize();
             Object = new TestClass();
+            Fixture = new Fixture();
         }
 
         [TestMethod]
         public void DueDate_should_be_gettable_and_settable()
         {
-            var randomValue = GetRandom.Datetime();
+            var randomValue = Fixture.Create<DateTime>();
 
             // Act
             var initialDueDateValue = Object.DueDate;
@@ -34,7 +37,7 @@ namespace Tests.Data.Feedbacks
         [TestMethod]
         public void DateAdded_should_be_gettable_and_settable()
         {
-            var randomValue = GetRandom.Datetime();
+            var randomValue = Fixture.Create<DateTime>();
 
             // Act
             var initialDateAddedValue = Object.DateAdded;
@@ -60,7 +63,7 @@ namespace Tests.Data.Feedbacks
         [TestMethod]
         public void Overdue_should_be_gettable_and_settable()
         {
-            var randomValue = GetRandom.Bool();
+            var randomValue = Fixture.Create<bool>();
 
             // Act
             var initialOverdueValue = Object.IsOverdue;

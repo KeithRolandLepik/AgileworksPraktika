@@ -1,4 +1,5 @@
 ﻿using System;
+using AutoFixture;
 using Data.Feedbacks;
 using Domain.Feedbacks;
 using Facade.Feedbacks;
@@ -24,15 +25,16 @@ namespace Tests.Infra.Common
         [TestInitialize]
         public void TestInitialize()
         {
+            Fixture = new Fixture();
             InitializeTestDatabase();
             Sut = new TestClass(DocumentStore);
-            EntityData = GetRandom.FeedbackData();
+            EntityData = Fixture.Create<FeedbackData>();
         }
 
         [TestMethod]
         public void Get_should_retrieve_all_feedbacks_from_database()
         {
-            var count = GetRandom.RndInteger(1, 100);
+            var count = 20;
             PopulateDatabase(count);
 
             // Act
@@ -47,7 +49,7 @@ namespace Tests.Infra.Common
         [TestMethod]
         public void Delete_should_remove_entity_from_database()
         {
-            PopulateDatabase(GetRandom.RndInteger(1, 100));
+            PopulateDatabase(20);
             // Act
             var count = Sut.Get().GetAwaiter().GetResult().Count;
             var feedbackToBeDeleted= Sut.Get().GetAwaiter().GetResult()[0];
@@ -65,8 +67,8 @@ namespace Tests.Infra.Common
         {
             var feedbackInput = new AddFeedbackRequest
             {
-                Description = GetRandom.RndInteger(1, 100).ToString(),
-                DueDate = GetRandom.Datetime(DateTime.Now.AddDays(1)),
+                Description = Fixture.Create<string>(),
+                DueDate = Fixture.Create<DateTime>(),
             };
             var entityToBeAdded = FeedbackMapper.MapToDomainFromAddRequest(feedbackInput);
             
@@ -84,14 +86,14 @@ namespace Tests.Infra.Common
         [TestMethod]
         public void Update_should_update_existing_database_item()
         {
-            PopulateDatabase(GetRandom.RndInteger(1, 100));
+            PopulateDatabase(20);
             
             var newFeedbackUpdate = new UpdateFeedbackRequest
                 {
                     IsCompleted = true,
-                    Description = GetRandom.RndInteger(1, 100).ToString(),
-                    DueDate = GetRandom.Datetime(DateTime.Now.AddDays(1)),
-                };
+                    Description = Fixture.Create<string>(),
+                    DueDate = Fixture.Create<DateTime>()
+            };
 
             // Act
             var initialFeedbackData = Sut.Get().GetAwaiter().GetResult()[0];
@@ -100,6 +102,7 @@ namespace Tests.Infra.Common
 
             // Assert
             var initialFeedbackDataCopy2 = Sut.Get(initialFeedbackData.Data.Id).GetAwaiter().GetResult();
+            initialFeedbackDataCopy2.Data.IsOverdue = feedbackToUpdate.Data.IsOverdue;
             AssertArePropertyValuesEqual(initialFeedbackDataCopy2.Data, feedbackToUpdate.Data);
         }
 
@@ -109,8 +112,8 @@ namespace Tests.Infra.Common
             {
                 var feedbackInput = new AddFeedbackRequest
                 {
-                    Description = GetRandom.RndInteger(1, 100).ToString(),
-                    DueDate = GetRandom.Datetime(DateTime.Now.AddDays(1)),
+                    Description = Fixture.Create<string>(),
+                    DueDate = Fixture.Create<DateTime>()
                 };
                 var entityToBeAdded = FeedbackMapper.MapToDomainFromAddRequest(feedbackInput);
                 

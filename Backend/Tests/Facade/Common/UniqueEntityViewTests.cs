@@ -1,6 +1,7 @@
 ﻿using Facade.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using AutoFixture;
 
 namespace Tests.Facade.Common
 {
@@ -14,13 +15,13 @@ namespace Tests.Facade.Common
         {
             base.TestInitialize();
             Object = new TestClass();
-
+            Fixture = new Fixture();
         }
 
         [TestMethod]
         public void Id_should_be_gettable_and_settable()
         {
-            var randomIdValue = GetRandom.RndInteger(1, 100);
+            var randomIdValue = Fixture.Create<int>();
 
             // Act
             var initialIdValue = Object.Id;

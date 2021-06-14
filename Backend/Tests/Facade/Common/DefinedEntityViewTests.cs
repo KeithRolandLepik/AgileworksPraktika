@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
+using AutoFixture;
 using Facade.Common;
 
 namespace Tests.Facade.Common
@@ -19,7 +20,7 @@ namespace Tests.Facade.Common
         [TestMethod]
         public void Description_should_be_gettable_and_settable()
         {
-            var randomDescriptionValue = GetRandom.RndInteger(1,100).ToString();
+            var randomDescriptionValue = Fixture.Create<string>();
 
             // Act
             var initialDescriptionValue = Object.Description;

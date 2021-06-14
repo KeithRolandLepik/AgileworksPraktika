@@ -1,4 +1,7 @@
-﻿using Domain.Feedbacks;
+﻿using System;
+using AutoFixture;
+using Data.Feedbacks;
+using Domain.Feedbacks;
 using Facade.Feedbacks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -7,16 +10,22 @@ namespace Tests.Facade.Feedbacks
     [TestClass]
     public class FeedbackMapperTests : BaseTests
     {
-
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            Fixture = new Fixture();
+        }
         [TestMethod]
         public void MapToDomain_should_map_view_to_domain()
         {
-            var view = new FeedbackModel { IsOverdue = GetRandom.Bool(), IsCompleted = GetRandom.Bool(),
-              DateAdded = GetRandom.Datetime(), Description = "test", DueDate = GetRandom.Datetime() };
+            var view = new FeedbackModel { IsOverdue = false, IsCompleted = Fixture.Create<bool>(),
+              DateAdded = Fixture.Create<DateTime>(), Description = Fixture.Create<string>(), DueDate = Fixture.Create<DateTime>()
+            };
           
             // Act
             var data = FeedbackMapper.MapToDomain(view).Data;
-
+            view.IsOverdue = data.IsOverdue;
+        
             // Assert
             AssertArePropertyValuesEqual(view, data);
         }
@@ -24,7 +33,7 @@ namespace Tests.Facade.Feedbacks
         [TestMethod]
         public void MapToView_should_map_domain_to_view()
         {
-            var data = GetRandom.FeedbackData();
+            var data = Fixture.Create<FeedbackData>();
 
             // Act
             var view = FeedbackMapper.MapToModel(new Feedback(data));
@@ -38,8 +47,8 @@ namespace Tests.Facade.Feedbacks
         {
             var inputData = new AddFeedbackRequest()
             {
-                Description = "test",
-                DueDate = GetRandom.Datetime()
+                Description = Fixture.Create<string>(),
+                DueDate = Fixture.Create<DateTime>(),
             };
 
             // Act
@@ -55,11 +64,11 @@ namespace Tests.Facade.Feedbacks
             var updateData = new UpdateFeedbackRequest()
             {
                 IsCompleted = false,
-                Description = "test",
-                DueDate = GetRandom.Datetime()
+                Description = Fixture.Create<string>(),
+                DueDate = Fixture.Create<DateTime>()
             };
             var domain = new Feedback();
-            domain.Data = GetRandom.FeedbackData();
+            domain.Data = Fixture.Create<FeedbackData>();
 
             // Act
             domain = FeedbackMapper.MapToDomainFromUpdateRequest(domain, updateData);

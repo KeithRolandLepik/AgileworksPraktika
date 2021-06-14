@@ -1,4 +1,6 @@
-﻿using Facade.Common;
+﻿using System;
+using AutoFixture;
+using Facade.Common;
 using Facade.Feedbacks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -18,7 +20,7 @@ namespace Tests.Facade.Feedbacks
         [TestMethod]
         public void DueDate_should_be_gettable_and_settable()
         {
-            var randomValue = GetRandom.Datetime();
+            var randomValue = Fixture.Create<DateTime>();
 
             // Act
             var initialDueDateValue = Object.DueDate;
@@ -33,7 +35,7 @@ namespace Tests.Facade.Feedbacks
         [TestMethod]
         public void DateAdded_should_be_gettable_and_settable()
         {
-            var randomValue = GetRandom.Datetime();
+            var randomValue = Fixture.Create<DateTime>();
 
             // Act
             var initialDateAddedValue = Object.DateAdded;
@@ -59,7 +61,7 @@ namespace Tests.Facade.Feedbacks
         [TestMethod]
         public void Overdue_should_be_gettable_and_settable()
         {
-            var randomValue = GetRandom.Bool();
+            var randomValue = Fixture.Create<bool>();
 
             // Act
             var initialOverdueValue = Object.IsOverdue;
