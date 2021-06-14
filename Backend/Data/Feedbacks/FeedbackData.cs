@@ -8,6 +8,6 @@ namespace Data.Feedbacks
         public DateTime DateAdded { get; set; }
         public DateTime DueDate { get; set; }
         public bool IsCompleted { get; set; }
-        public bool IsOverdue { get; set; }
+        public bool IsOverdue => DueDate < DateTime.Now.AddHours(1);
     }
 }

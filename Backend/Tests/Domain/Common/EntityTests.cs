@@ -30,7 +30,7 @@ namespace Tests.Domain.Common
         [TestMethod]
         public void New_entity_data_should_set_value_from_parameter()
         {
-            var entityData = new FeedbackData { Id = 1, Description = "asd", IsCompleted = false, IsOverdue = false, DateAdded = DateTime.Now, DueDate = new DateTime(2021, 6, 6, 20, 40, 0) };
+            var entityData = new FeedbackData { Id = 1, Description = "asd", IsCompleted = false, DateAdded = DateTime.Now, DueDate = new DateTime(2021, 6, 6, 20, 40, 0) };
 
             // Act
             var initialEntityData = Object.Data;
@@ -44,7 +44,7 @@ namespace Tests.Domain.Common
         [TestMethod]
         public void Entity_data_should_be_null_before_setting_and_have_value_after_setting()
         {
-            var entityData = new FeedbackData { Id = 1, Description = "asd", IsCompleted = false, IsOverdue = false, DateAdded = DateTime.Now, DueDate = new DateTime(2021, 6, 6, 20, 40, 0) };
+            var entityData = new FeedbackData { Id = 1, Description = "asd", IsCompleted = false, DateAdded = DateTime.Now, DueDate = new DateTime(2021, 6, 6, 20, 40, 0) };
 
             // Act
             var initialEntityData = Object.Data;

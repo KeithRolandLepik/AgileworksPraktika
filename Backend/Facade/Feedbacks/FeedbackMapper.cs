@@ -12,7 +12,6 @@ namespace Facade.Feedbacks
                 Description = feedbackModel.Description,
                 DueDate = feedbackModel.DueDate,
                 IsCompleted = feedbackModel.IsCompleted,
-                IsOverdue = feedbackModel.IsOverdue,
                 DateAdded = feedbackModel.DateAdded,
             });
 

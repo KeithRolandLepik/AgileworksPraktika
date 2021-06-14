@@ -61,17 +61,17 @@ namespace Tests.Data.Feedbacks
         }
 
         [TestMethod]
-        public void Overdue_should_be_gettable_and_settable()
+        public void Overdue_should_be_gettable_and_should_calculate_value()
         {
-            var randomValue = Fixture.Create<bool>();
-
             // Act
-            var initialOverdueValue = Object.IsOverdue;
-            Object.IsOverdue = randomValue;
+            Object.DueDate = DateTime.Now;
+            var overDue = Object.IsOverdue;
+            Object.DueDate = DateTime.Now.AddDays(599);
+            var notOverDue = Object.IsOverdue;
 
             // Assert
-            Assert.AreNotEqual(initialOverdueValue, randomValue);
-            Assert.AreEqual(Object.IsOverdue, randomValue);
+            Assert.IsTrue(overDue);
+            Assert.IsFalse(notOverDue);
         }
     }
 }

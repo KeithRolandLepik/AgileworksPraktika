@@ -12,7 +12,7 @@ namespace Tests.Domain.Feedbacks
         [TestMethod]
         public void Feedback_on_creation_should_calculate_and_set_overdue_value()
         {
-            var entityData = new FeedbackData { Id = 1, Description = "asd", IsCompleted = false, IsOverdue = false, DateAdded = DateTime.Now, DueDate = DateTime.Now.AddHours(50) };
+            var entityData = new FeedbackData { Id = 1, Description = "asd", IsCompleted = false, DateAdded = DateTime.Now, DueDate = DateTime.Now.AddHours(50) };
 
             // Act
             Object = new Feedback(entityData);

@@ -102,8 +102,7 @@ namespace Tests.Infra.Common
 
             // Assert
             var initialFeedbackDataCopy2 = Sut.Get(initialFeedbackData.Data.Id).GetAwaiter().GetResult();
-            initialFeedbackDataCopy2.Data.IsOverdue = feedbackToUpdate.Data.IsOverdue;
-            AssertArePropertyValuesEqual(initialFeedbackDataCopy2.Data, feedbackToUpdate.Data);
+             AssertArePropertyValuesEqual(initialFeedbackDataCopy2.Data, feedbackToUpdate.Data);
         }
 
         public void PopulateDatabase(int count)
