@@ -4,6 +4,7 @@ using Soft;
 using System;
 using Tests.Common;
 using Microsoft.Extensions.Hosting;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Weasel.Postgresql;
 
 namespace Tests.Infra.Common
@@ -18,9 +19,9 @@ namespace Tests.Infra.Common
         {
             DatabaseFixture = new DatabaseFixture(
             TestConnectionStringSource.GenerateConnectionString());
-
             CreateNewDocumentStore();
         }
+
         protected void CreateNewDocumentStore()
         {
             Services = Program.CreateHostBuilder(Array.Empty<string>())
@@ -31,6 +32,11 @@ namespace Tests.Infra.Common
                 })).Build().Services;
 
             DocumentStore = Services.GetRequiredService<IDocumentStore>();
+        }
+        [TestCleanup]
+        public void Cleanup()
+        {
+            DatabaseFixture.Dispose();
         }
     }
 }

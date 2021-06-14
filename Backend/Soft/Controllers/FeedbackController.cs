@@ -12,62 +12,60 @@ namespace Soft.Controllers
     public class FeedbackController : ControllerBase
     {
         private readonly IFeedbackRepository _repository;
-        public FeedbackController(IFeedbackRepository Repository)
+        public FeedbackController(IFeedbackRepository repository)
         {
-            _repository = Repository;
+            _repository = repository;
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<FeedbackView>>> GetFeedbacks()
+        public async Task<ActionResult<List<FeedbackModel>>> GetFeedbacks()
         {
             var list = await _repository.Get();
 
-            var viewList = list.Select(x => FeedbackMapper.MapToView(x)).ToList();
+            var viewList = list.Select(FeedbackMapper.MapToModel).ToList();
 
             return viewList;
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<FeedbackView>> GetFeedback(int id)
+        public async Task<ActionResult<FeedbackModel>> GetFeedback(int id)
         {
             var feedback = await _repository.Get(id);
 
             if (feedback.Data == null) return NotFound();
 
-            return Ok(FeedbackMapper.MapToView(feedback));
+            return Ok(FeedbackMapper.MapToModel(feedback));
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutFeedback(int id, FeedbackUpdate feedbackUpdate)
+        public async Task<IActionResult> PutFeedback(int id, UpdateFeedbackRequest updateFeedbackRequest)
         {
-            if (feedbackUpdate.Description == null || feedbackUpdate.DueDate == default) return BadRequest();
+            if (updateFeedbackRequest.Description == null || updateFeedbackRequest.DueDate == default) return BadRequest();
 
             var feedbackToUpdate = await _repository.Get(id);
 
             if (feedbackToUpdate.Data == null)
                 return BadRequest();
-            
-            FeedbackMapper.MapToDomainFromUpdate(feedbackToUpdate, feedbackUpdate);
 
-            await _repository.Update(FeedbackMapper.MapToDomainFromUpdate(feedbackToUpdate, feedbackUpdate));
+            await _repository.Update(FeedbackMapper.MapToDomainFromUpdateRequest(feedbackToUpdate, updateFeedbackRequest));
 
             return Ok();
         }
 
         [HttpPost]
-        public async Task<ActionResult<FeedbackView>> PostFeedback(FeedbackInput feedbackPost)
+        public async Task<ActionResult<FeedbackModel>> PostFeedback(AddFeedbackRequest addFeedbackPost)
         {
-            if (feedbackPost == null 
-                || feedbackPost.Description == null 
-                || feedbackPost.DueDate == default) 
+            if (addFeedbackPost?.Description == null || addFeedbackPost.DueDate == default) 
                 return BadRequest();
 
-
-            var result = await _repository.Add(FeedbackMapper.MapToDomainFromInput(feedbackPost));
+            var feedback = FeedbackMapper.MapToDomainFromAddRequest(addFeedbackPost);
+            if (feedback.Data.DueDate < feedback.Data.DateAdded) return BadRequest();
+            
+            var result = await _repository.Add(feedback);
             if (result.Data == null) 
                 return Conflict();
 
-            return CreatedAtAction("GetFeedback", new { id = result.Data.Id }, FeedbackMapper.MapToView(result));
+            return CreatedAtAction("GetFeedback", new { id = result.Data.Id }, FeedbackMapper.MapToModel(result));
         }
 
         [HttpDelete("{id}")]

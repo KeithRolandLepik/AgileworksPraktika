@@ -5,9 +5,9 @@ using System;
 namespace Tests.Facade.Common
 {
     [TestClass]
-    public class UniqueEntityViewTests : BaseClassTests<UniqueEntityView, object>
+    public class UniqueEntityViewTests : BaseClassTests<UniqueEntityModel, object>
     {
-        private class TestClass : UniqueEntityView { }
+        private class TestClass : UniqueEntityModel { }
 
         [TestInitialize]
         public override void TestInitialize()
@@ -20,7 +20,7 @@ namespace Tests.Facade.Common
         [TestMethod]
         public void Id_should_be_gettable_and_settable()
         {
-            var randomIdValue = GetRandom.RndInteger(1, 10);
+            var randomIdValue = GetRandom.RndInteger(1, 100);
 
             // Act
             var initialIdValue = Object.Id;

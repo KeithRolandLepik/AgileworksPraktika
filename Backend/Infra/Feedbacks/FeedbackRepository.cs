@@ -9,19 +9,6 @@ namespace Infra.Feedbacks
     {
         public FeedbackRepository(IDocumentStore session): base(session) { }
 
-        protected override FeedbackData copyData(FeedbackData data)
-        {
-            return 
-                new FeedbackData {
-                    Id = data.Id,
-                    DueDate = data.DueDate,
-                    Description = data.Description,
-                    DateAdded = data.DateAdded,
-                    Completed = data.Completed,
-                    Overdue = data.Overdue
-                };
-        }
-
-        protected internal override Feedback toDomainObject(FeedbackData entityData) => new Feedback(entityData);
+        protected internal override Feedback ToDomainObject(FeedbackData entityData) => new Feedback(entityData);
     }
 }

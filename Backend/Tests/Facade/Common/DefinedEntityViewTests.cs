@@ -5,9 +5,9 @@ using Facade.Common;
 namespace Tests.Facade.Common
 {
     [TestClass]
-    public class DefinedEntityViewTests : BaseClassTests<DefinedEntityView, UniqueEntityView>
+    public class DefinedEntityViewTests : BaseClassTests<DefinedEntityModel, UniqueEntityModel>
     {
-        private class TestClass : DefinedEntityView { }
+        private class TestClass : DefinedEntityModel { }
 
         [TestInitialize]
         public override void TestInitialize()
@@ -19,7 +19,7 @@ namespace Tests.Facade.Common
         [TestMethod]
         public void Description_should_be_gettable_and_settable()
         {
-            var randomDescriptionValue = GetRandom.RndInteger(1, 10).ToString();
+            var randomDescriptionValue = GetRandom.RndInteger(1,100).ToString();
 
             // Act
             var initialDescriptionValue = Object.Description;

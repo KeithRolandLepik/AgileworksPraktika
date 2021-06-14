@@ -49,12 +49,12 @@ namespace Tests.Data.Feedbacks
         public void Completed_should_be_gettable_and_settable()
         {
             // Act
-            var initialCompletedValue = Object.Completed;
-            Object.Completed = true;
+            var initialCompletedValue = Object.IsCompleted;
+            Object.IsCompleted = true;
 
             // Assert
             Assert.AreEqual(initialCompletedValue, false);
-            Assert.AreEqual(Object.Completed, true);
+            Assert.AreEqual(Object.IsCompleted, true);
         }
 
         [TestMethod]
@@ -63,12 +63,12 @@ namespace Tests.Data.Feedbacks
             var randomValue = GetRandom.Bool();
 
             // Act
-            var initialOverdueValue = Object.Overdue;
-            Object.Overdue = randomValue;
+            var initialOverdueValue = Object.IsOverdue;
+            Object.IsOverdue = randomValue;
 
             // Assert
             Assert.AreNotEqual(initialOverdueValue, randomValue);
-            Assert.AreEqual(Object.Overdue, randomValue);
+            Assert.AreEqual(Object.IsOverdue, randomValue);
         }
     }
 }

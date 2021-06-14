@@ -26,7 +26,7 @@ namespace Tests.Data.Common
         [TestMethod]
         public void Description_should_be_settable_and_gettable()
         {
-            var randomValue = GetRandom.RndInteger(1, 10).ToString();
+            var randomValue = GetRandom.RndInteger(1, 100).ToString();
 
             // Act
             var initialDescriptionValue = Object.Description;

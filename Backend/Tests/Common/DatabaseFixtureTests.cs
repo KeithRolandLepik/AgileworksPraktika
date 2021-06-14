@@ -12,17 +12,17 @@ namespace Tests.Common
         [TestMethod]
         public void InitializeTestDatabase_should_open_connection_and_create_new_database()
         {
-            var initialDatabaseCount = GetAllNpgsqlDatabasesList().ToList().Count();
+            var initialDatabaseCount = GetAllNpgsqlDatabaseNames().ToList().Count();
 
             // Act
             InitializeTestDatabase();
-            var afterDatabaseCount = GetAllNpgsqlDatabasesList().ToList().Count();
+            var afterDatabaseCount = GetAllNpgsqlDatabaseNames().ToList().Count();
             var databaseName = DatabaseFixture.NpgsqlConnection.Database;
 
             // Assert
             Assert.AreEqual(DatabaseFixture.NpgsqlConnection.State.ToString().ToLower(), "open");
             Assert.AreEqual(afterDatabaseCount, initialDatabaseCount+1);
-            Assert.IsTrue(GetAllNpgsqlDatabasesList().ToList().Contains(databaseName));
+            Assert.IsTrue(GetAllNpgsqlDatabaseNames().ToList().Contains(databaseName));
         }
 
         [TestMethod]
@@ -30,15 +30,15 @@ namespace Tests.Common
         {
             // Act
             InitializeTestDatabase();
-            var initialDatabaseCount = GetAllNpgsqlDatabasesList().ToList().Count();
+            var initialDatabaseCount = GetAllNpgsqlDatabaseNames().ToList().Count();
             var databaseName = DatabaseFixture.NpgsqlConnection.Database;
             DatabaseFixture.Dispose();
-            var afterDatabaseCount = GetAllNpgsqlDatabasesList().ToList().Count();
+            var finalDatabaseCount = GetAllNpgsqlDatabaseNames().ToList().Count();
 
             // Assert
             Assert.AreEqual(DatabaseFixture.NpgsqlConnection.State.ToString().ToLower(), "closed");
-            Assert.AreEqual(afterDatabaseCount, initialDatabaseCount - 1);
-            Assert.IsFalse(GetAllNpgsqlDatabasesList().ToList().Contains(databaseName));
+            Assert.AreEqual(finalDatabaseCount, initialDatabaseCount - 1);
+            Assert.IsFalse(GetAllNpgsqlDatabaseNames().ToList().Contains(databaseName));
         }
 
         [TestMethod]
@@ -46,19 +46,19 @@ namespace Tests.Common
         {
             // Act
             InitializeTestDatabase();
-            var databases = GetAllNpgsqlDatabasesList().ToList();
+            var databases = GetAllNpgsqlDatabaseNames().ToList();
 
             // Assert
-            Assert.AreEqual(databases.Where(x => x.Contains("tests-db")).Count(), 1);
+            Assert.AreEqual(1,databases.Count(x => x.Contains("tests-db")));
         }
 
-        public static IEnumerable<string>  GetAllNpgsqlDatabasesList()
+        public static IEnumerable<string>  GetAllNpgsqlDatabaseNames()
         {
-            NpgsqlConnection connection = new NpgsqlConnection("server=localhost;Username=postgres;Password=parool;");
+            var connection = new NpgsqlConnection("server=localhost;Username=postgres;Password=parool;");
             connection.Open();
             var databaseCommand = new NpgsqlCommand("SELECT datname FROM pg_database", connection);
 
-            NpgsqlDataReader dataReader = databaseCommand.ExecuteReader();
+            var dataReader = databaseCommand.ExecuteReader();
 
             while (dataReader.Read())
             {
@@ -66,12 +66,6 @@ namespace Tests.Common
             }
 
             connection.Close();
-        }
-
-        [TestCleanup]
-        public void Cleanup()
-        {
-            DatabaseFixture.Dispose();
         }
     }
 }

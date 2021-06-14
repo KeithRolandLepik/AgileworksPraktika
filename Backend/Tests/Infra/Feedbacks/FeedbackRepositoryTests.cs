@@ -10,14 +10,14 @@ namespace Tests.Infra.Feedbacks
     {
 
         protected FeedbackData EntityData;
-        protected FeedbackRepository Object;
+        protected FeedbackRepository TestRepository;
         protected int Count;
 
         [TestInitialize]
         public void TestInitialize()
         {
             InitializeTestDatabase();
-            Object = new FeedbackRepository(DocumentStore);
+            TestRepository = new FeedbackRepository(DocumentStore);
         }
     }
 }

@@ -11,14 +11,14 @@ namespace Tests.Facade.Feedbacks
         [TestMethod]
         public void MapToDomain_should_map_view_to_domain()
         {
-            var view = new FeedbackView { Overdue = GetRandom.Bool(), Completed = GetRandom.Bool(),
+            var view = new FeedbackModel { IsOverdue = GetRandom.Bool(), IsCompleted = GetRandom.Bool(),
               DateAdded = GetRandom.Datetime(), Description = "test", DueDate = GetRandom.Datetime() };
           
             // Act
             var data = FeedbackMapper.MapToDomain(view).Data;
 
             // Assert
-            TestArePropertyValuesEqual(view, data);
+            AssertArePropertyValuesEqual(view, data);
         }
 
         [TestMethod]
@@ -27,34 +27,34 @@ namespace Tests.Facade.Feedbacks
             var data = GetRandom.FeedbackData();
 
             // Act
-            var view = FeedbackMapper.MapToView(new Feedback(data));
+            var view = FeedbackMapper.MapToModel(new Feedback(data));
 
             // Assert
-            TestArePropertyValuesEqual(view, data);
+            AssertArePropertyValuesEqual(view, data);
         }
 
         [TestMethod]
         public void MapToDomainFromInput_should_map_domain_from_input()
         {
-            var inputData = new FeedbackInput()
+            var inputData = new AddFeedbackRequest()
             {
                 Description = "test",
                 DueDate = GetRandom.Datetime()
             };
 
             // Act
-            var domain = FeedbackMapper.MapToDomainFromInput(inputData);
+            var domain = FeedbackMapper.MapToDomainFromAddRequest(inputData);
 
             // Assert
-            TestArePropertyValuesEqual(inputData, domain.Data);
+            AssertArePropertyValuesEqual(inputData, domain.Data);
         }
 
         [TestMethod]
         public void MapToDomainFromUpdate_should_map_domain_from_input()
         {
-            var updateData = new FeedbackUpdate()
+            var updateData = new UpdateFeedbackRequest()
             {
-                Completed = false,
+                IsCompleted = false,
                 Description = "test",
                 DueDate = GetRandom.Datetime()
             };
@@ -62,10 +62,10 @@ namespace Tests.Facade.Feedbacks
             domain.Data = GetRandom.FeedbackData();
 
             // Act
-            domain = FeedbackMapper.MapToDomainFromUpdate(domain, updateData);
+            domain = FeedbackMapper.MapToDomainFromUpdateRequest(domain, updateData);
 
             // Assert
-            TestArePropertyValuesEqual(updateData, domain.Data);
+            AssertArePropertyValuesEqual(updateData, domain.Data);
         }
     }
 }

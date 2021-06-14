@@ -6,49 +6,43 @@ namespace Facade.Feedbacks
 {
     public static class FeedbackMapper
     {
-        public static Feedback MapToDomain(FeedbackView v)
-        {
-            var d = new FeedbackData
-            {
-                Id = v.Id,
-                Description = v.Description,
-                DueDate = v.DueDate,
-                Completed = v.Completed,
-                Overdue = v.Overdue,
-                DateAdded = v.DateAdded,
-            };
-            
-            return new Feedback(d);
-        }
+        public static Feedback MapToDomain(FeedbackModel feedbackModel) =>
+            new(new FeedbackData {
+                Id = feedbackModel.Id,
+                Description = feedbackModel.Description,
+                DueDate = feedbackModel.DueDate,
+                IsCompleted = feedbackModel.IsCompleted,
+                IsOverdue = feedbackModel.IsOverdue,
+                DateAdded = feedbackModel.DateAdded,
+            });
 
-        public static FeedbackView MapToView(Feedback o)
+        public static FeedbackModel MapToModel(Feedback feedback)
         {
-            var v = new FeedbackView
+            var v = new FeedbackModel
             {
-                Id = o.Data.Id,
-                Description = o.Data.Description,
-                DueDate = o.Data.DueDate,
-                Completed = o.Data.Completed,
-                Overdue = o.Data.Overdue,
-                DateAdded = o.Data.DateAdded,
+                Id = feedback.Data.Id,
+                Description = feedback.Data.Description,
+                DueDate = feedback.Data.DueDate,
+                IsCompleted = feedback.Data.IsCompleted,
+                IsOverdue = feedback.Data.IsOverdue,
+                DateAdded = feedback.Data.DateAdded,
             };
             return v;
         }
-        public static Feedback MapToDomainFromInput(FeedbackInput input)
+        public static Feedback MapToDomainFromAddRequest(AddFeedbackRequest addFeedbackRequest)
         {
-            var d = new FeedbackData
+            return new(new FeedbackData
             {
-                Description = input.Description,
-                DueDate = input.DueDate,
+                Description = addFeedbackRequest.Description,
+                DueDate = addFeedbackRequest.DueDate,
                 DateAdded = DateTime.Now
-            };
-            return new Feedback(d);
+            });
         }
-        public static Feedback MapToDomainFromUpdate(Feedback feedbackToUpdate, FeedbackUpdate update)
+        public static Feedback MapToDomainFromUpdateRequest(Feedback feedbackToUpdate, UpdateFeedbackRequest request)
         {
-            feedbackToUpdate.Data.Description = update.Description;
-            feedbackToUpdate.Data.DueDate = update.DueDate;
-            feedbackToUpdate.Data.Completed = update.Completed;
+            feedbackToUpdate.Data.Description = request.Description;
+            feedbackToUpdate.Data.DueDate = request.DueDate;
+            feedbackToUpdate.Data.IsCompleted = request.IsCompleted;
 
             return feedbackToUpdate;
         }

@@ -6,7 +6,8 @@ namespace Tests
     public abstract class BaseTests
     {
         protected Type Type;
-        protected static void TestArePropertyValuesEqual(object obj1, object obj2)
+
+        protected static void AssertArePropertyValuesEqual(object obj1, object obj2)
         {
             foreach (var property in obj1.GetType().GetProperties())
             {

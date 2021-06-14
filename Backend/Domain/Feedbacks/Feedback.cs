@@ -24,10 +24,10 @@ namespace Domain.Feedbacks
         {
             if (GetHoursTillDueDate() > 1)
             {
-                Data.Overdue = false;
+                Data.IsOverdue = false;
             }
             else { 
-                Data.Overdue = true;
+                Data.IsOverdue = true;
             }
         }
     }

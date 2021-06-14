@@ -6,17 +6,11 @@ namespace Tests.Common
     public class DatabaseFixture : IDisposable
     {
         public string ConnectionString { get; private set; }
-        internal NpgsqlConnectionStringBuilder ConnectionStringAsBuilder => new NpgsqlConnectionStringBuilder(ConnectionString);
+        internal NpgsqlConnectionStringBuilder ConnectionStringBuilder => new NpgsqlConnectionStringBuilder(ConnectionString);
         public NpgsqlConnection NpgsqlConnection { get; }
         public DatabaseFixture(string initialConnectionString)
         {
-            var connectionStringBuilder = new NpgsqlConnectionStringBuilder(initialConnectionString)
-            {
-                Encoding = "UTF8",
-                ConnectionPruningInterval = 2,
-                ConnectionIdleLifetime = 10,
-                Enlist = true
-            };
+            var connectionStringBuilder = new NpgsqlConnectionStringBuilder(initialConnectionString);
             ConnectionString = connectionStringBuilder.ConnectionString;
             CreateDatabase();
             NpgsqlConnection = new NpgsqlConnection(ConnectionString);
@@ -39,7 +33,7 @@ namespace Tests.Common
 #pragma warning disable CA2100
                 var createDatabaseCommand =
                     new NpgsqlCommand(
-                        $"CREATE DATABASE \"{ConnectionStringAsBuilder.Database}\" WITH OWNER = postgres CONNECTION LIMIT = -1;",
+                        $"CREATE DATABASE \"{ConnectionStringBuilder.Database}\"",
                         connection);
 #pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
                 createDatabaseCommand.ExecuteNonQuery();
@@ -60,14 +54,14 @@ namespace Tests.Common
 #pragma warning disable CA2100
                 var closeAllConnectionsCommand =
                     new NpgsqlCommand(
-                        $"SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '{ConnectionStringAsBuilder.Database}';",
+                        $"SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '{ConnectionStringBuilder.Database}';",
                         connection);
 #pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
                 closeAllConnectionsCommand.ExecuteNonQuery();
 #pragma warning disable CA2100
                 var dropDatabaseCommand =
                     new NpgsqlCommand(
-                        $@"DROP DATABASE IF EXISTS ""{ConnectionStringAsBuilder.Database}""", connection);
+                        $@"DROP DATABASE IF EXISTS ""{ConnectionStringBuilder.Database}""", connection);
 #pragma warning restore CA2100
                 dropDatabaseCommand.ExecuteNonQuery();
             }
@@ -79,12 +73,9 @@ public static class TestConnectionStringSource
     public static string GenerateConnectionString()
     {
         var builder =
-            new NpgsqlConnectionStringBuilder(connectionString:
-                Environment.GetEnvironmentVariable("TestConnectionString")
-                ?? $"server=localhost;Port=5432;userid=postgres;password=parool")
+            new NpgsqlConnectionStringBuilder(connectionString: $"server=localhost;Port=5432;userid=postgres;password=parool")
             {
-                Database = "tests-db-" + Guid.NewGuid().ToString().ToLower(),
-                Enlist = true
+                Database = "tests-db-" + Guid.NewGuid().ToString().ToLower()
             };
         return builder.ConnectionString;
     }

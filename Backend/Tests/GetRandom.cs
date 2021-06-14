@@ -22,6 +22,11 @@ namespace Tests
             int range = ((TimeSpan)(DateTime.Today - start)).Days;
             return start.AddDays(rng.Next(range));
         }
+        public static DateTime Datetime(DateTime start)
+        {
+            Random rng = new Random();
+            return start.AddDays(rng.Next(5,10));
+        }
         public static int RndInteger(int min, int max)
         {
             Random rng = new Random();
@@ -29,7 +34,7 @@ namespace Tests
         }
         public static FeedbackData FeedbackData()
         {
-            return new FeedbackData { Description = "test", Completed = Bool(), DateAdded = DateTime.Now, DueDate = Datetime(), Overdue = Bool() };
+            return new FeedbackData { Description = "test", IsCompleted = Bool(), DateAdded = DateTime.Now, DueDate = Datetime(), IsOverdue = Bool() };
         }
     }
 }

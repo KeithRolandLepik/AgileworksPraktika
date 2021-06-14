@@ -23,7 +23,7 @@ namespace Infra.Common
             await using var session = _store.LightweightSession();
 
             var list = await session.Query<TData>().ToListAsync();
-            return toDomainObjectsList(list);
+            return ToDomainObjectsList(list);
         }
 
         public async Task<TDomain> Get(int id)
@@ -32,7 +32,7 @@ namespace Infra.Common
 
             var entityData = session.Load<TData>(id);
             
-            return toDomainObject(entityData);
+            return ToDomainObject(entityData);
         }
 
         public async Task Delete(int id)
@@ -53,7 +53,7 @@ namespace Infra.Common
 
             var entityData = await session.Query<TData>().FirstOrDefaultAsync(x => x.Id == obj.Data.Id);
             
-            return toDomainObject(entityData);
+            return ToDomainObject(entityData);
         }
 
         public async Task Update(TDomain obj)
@@ -65,11 +65,10 @@ namespace Infra.Common
             await session.SaveChangesAsync();
         }
 
-        protected abstract TData copyData(TData entityData);
+        
+        internal List<TDomain> ToDomainObjectsList(IEnumerable<TData> set) => set.Select(ToDomainObject).ToList();
 
-        internal List<TDomain> toDomainObjectsList(IEnumerable<TData> set) => set.Select(toDomainObject).ToList();
-
-        protected internal abstract TDomain toDomainObject(TData entityData);
+        protected internal abstract TDomain ToDomainObject(TData entityData);
 
     }
 }
