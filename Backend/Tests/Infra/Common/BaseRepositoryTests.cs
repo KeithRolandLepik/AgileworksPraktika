@@ -15,7 +15,7 @@ namespace Tests.Infra.Common
 
         internal class TestClass : BaseRepository<Feedback, FeedbackData>
         {
-            public TestClass(IDocumentSession documentSession) : base(documentSession) { }
+            public TestClass(IDocumentStore store) : base(store) { }
 
             protected override FeedbackData copyData(FeedbackData entityData)
             {
@@ -38,7 +38,7 @@ namespace Tests.Infra.Common
         public void TestInitialize()
         {
             InitializeTestDatabase();
-            Object = new TestClass(DocumentSession);
+            Object = new TestClass(DocumentStore);
             EntityData = GetRandom.FeedbackData();
         }
 
@@ -100,7 +100,7 @@ namespace Tests.Infra.Common
         }
 
         [TestMethod]
-        public void UpdateTest()
+        public void Update_should_update_existing_database_item()
         {
             Add_should_store_a_feedback_in_database();
             var newFeedbackUpdate = new FeedbackUpdate
@@ -111,14 +111,11 @@ namespace Tests.Infra.Common
                 };
 
             // Act
-            var initialFeedbackData = Object.Get(EntityData.Id).GetAwaiter().GetResult().Data;
-            var initialFeedbackDataCopy = Object.Get(EntityData.Id).GetAwaiter().GetResult().Data;
-            var feedbackToUpdate = FeedbackMapper.MapToDomainFromUpdate(new Feedback(initialFeedbackData), newFeedbackUpdate);
-            //Object.Update(feedbackToUpdate).GetAwaiter().GetResult();
+            var initialFeedbackData = Object.Get(EntityData.Id).GetAwaiter().GetResult();
+            var feedbackToUpdate = FeedbackMapper.MapToDomainFromUpdate(initialFeedbackData, newFeedbackUpdate);
+            Object.Update(feedbackToUpdate).GetAwaiter().GetResult();
 
             // Assert
-            // siia create documentsession ja võtan sealt uuesti 
-            CreateNewDocumentSession();
             var initialFeedbackDataCopy2 = Object.Get(EntityData.Id).GetAwaiter().GetResult();
             TestArePropertyValuesEqual(initialFeedbackDataCopy2.Data, feedbackToUpdate.Data);
         }

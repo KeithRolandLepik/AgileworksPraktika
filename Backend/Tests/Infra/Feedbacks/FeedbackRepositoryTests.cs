@@ -17,7 +17,7 @@ namespace Tests.Infra.Feedbacks
         public void TestInitialize()
         {
             InitializeTestDatabase();
-            Object = new FeedbackRepository(DocumentSession);
+            Object = new FeedbackRepository(DocumentStore);
         }
     }
 }

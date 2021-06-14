@@ -12,16 +12,16 @@ namespace Tests.Infra.Common
     {
         internal DatabaseFixture DatabaseFixture;
         internal IServiceProvider Services;
-        internal IDocumentSession DocumentSession;
+        internal IDocumentStore DocumentStore;
 
         public void InitializeTestDatabase()
         {
             DatabaseFixture = new DatabaseFixture(
             TestConnectionStringSource.GenerateConnectionString());
 
-            CreateNewDocumentSession();
+            CreateNewDocumentStore();
         }
-        protected void CreateNewDocumentSession()
+        protected void CreateNewDocumentStore()
         {
             Services = Program.CreateHostBuilder(Array.Empty<string>())
                 .ConfigureServices(services => services.AddMarten(options =>
@@ -30,7 +30,7 @@ namespace Tests.Infra.Common
                     options.AutoCreateSchemaObjects = AutoCreate.All;
                 })).Build().Services;
 
-            DocumentSession = Services.GetRequiredService<IDocumentSession>();
+            DocumentStore = Services.GetRequiredService<IDocumentStore>();
         }
     }
 }

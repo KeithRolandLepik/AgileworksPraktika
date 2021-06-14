@@ -11,49 +11,58 @@ namespace Infra.Common
             ICrudMethods<TDomain> where TData : UniqueEntityData, new()
             where TDomain : Entity<TData>, new()
     {
-        private readonly IDocumentSession _documentSession;
+        private readonly IDocumentStore _store;
         
-        protected BaseRepository(IDocumentSession documentSession)
+        protected BaseRepository(IDocumentStore store)
         {
-            _documentSession = documentSession;
+            _store = store;
         }
 
         public async Task<List<TDomain>> Get()
         {
-            var list = await _documentSession.Query<TData>().ToListAsync();
+            await using var session = _store.LightweightSession();
 
+            var list = await session.Query<TData>().ToListAsync();
             return toDomainObjectsList(list);
         }
 
         public async Task<TDomain> Get(int id)
         {
-            var entityData = _documentSession.Load<TData>(id);
+            await using var session = _store.LightweightSession();
+
+            var entityData = session.Load<TData>(id);
             
             return toDomainObject(entityData);
         }
 
         public async Task Delete(int id)
         {
-            _documentSession.Delete<TData>(id);
-            await _documentSession.SaveChangesAsync();
+            await using var session = _store.LightweightSession();
+
+            session.Delete<TData>(id);
+            await session.SaveChangesAsync();
         }
 
         public async Task<TDomain> Add(TDomain obj)
         {
-            _documentSession.Store(obj.Data);
-            
-            await _documentSession.SaveChangesAsync();
+            await using var session = _store.LightweightSession();
 
-            var entityData = await _documentSession.Query<TData>().FirstOrDefaultAsync(x => x.Id == obj.Data.Id);
+            session.Store(obj.Data);
+            
+            await session.SaveChangesAsync();
+
+            var entityData = await session.Query<TData>().FirstOrDefaultAsync(x => x.Id == obj.Data.Id);
             
             return toDomainObject(entityData);
         }
 
         public async Task Update(TDomain obj)
         {
-            _documentSession.Store<TData>(obj.Data);
+            await using var session = _store.LightweightSession();
 
-            await _documentSession.SaveChangesAsync();
+            session.Store<TData>(obj.Data);
+
+            await session.SaveChangesAsync();
         }
 
         protected abstract TData copyData(TData entityData);

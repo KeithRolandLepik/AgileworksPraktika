@@ -7,7 +7,7 @@ namespace Infra.Feedbacks
 {
     public sealed class FeedbackRepository:  BaseRepository<Feedback, FeedbackData>, IFeedbackRepository
     {
-        public FeedbackRepository(IDocumentSession session): base(session) { }
+        public FeedbackRepository(IDocumentStore session): base(session) { }
 
         protected override FeedbackData copyData(FeedbackData data)
         {

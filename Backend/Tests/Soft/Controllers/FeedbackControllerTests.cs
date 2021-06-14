@@ -19,7 +19,7 @@ namespace Tests.Soft.Controllers
         {
             InitializeTestDatabase();
 
-            Repository = new FeedbackRepository(DocumentSession);
+            Repository = new FeedbackRepository(DocumentStore);
             Controller = new FeedbackController(Repository);
 
             Count = GetRandom.RndInteger(5, 10);
