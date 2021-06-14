@@ -112,12 +112,15 @@ namespace Tests.Infra.Common
 
             // Act
             var initialFeedbackData = Object.Get(EntityData.Id).GetAwaiter().GetResult().Data;
+            var initialFeedbackDataCopy = Object.Get(EntityData.Id).GetAwaiter().GetResult().Data;
             var feedbackToUpdate = FeedbackMapper.MapToDomainFromUpdate(new Feedback(initialFeedbackData), newFeedbackUpdate);
             //Object.Update(feedbackToUpdate).GetAwaiter().GetResult();
-            var updatedFeedback = Object.Get(initialFeedbackData.Id).GetAwaiter().GetResult();
 
             // Assert
-            TestArePropertyValuesEqual(updatedFeedback.Data, feedbackToUpdate.Data);
+            // siia create documentsession ja võtan sealt uuesti 
+            CreateNewDocumentSession();
+            var initialFeedbackDataCopy2 = Object.Get(EntityData.Id).GetAwaiter().GetResult();
+            TestArePropertyValuesEqual(initialFeedbackDataCopy2.Data, feedbackToUpdate.Data);
         }
 
     }

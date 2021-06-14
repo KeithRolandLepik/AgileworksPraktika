@@ -19,12 +19,16 @@ namespace Tests.Infra.Common
             DatabaseFixture = new DatabaseFixture(
             TestConnectionStringSource.GenerateConnectionString());
 
+            CreateNewDocumentSession();
+        }
+        protected void CreateNewDocumentSession()
+        {
             Services = Program.CreateHostBuilder(Array.Empty<string>())
-            .ConfigureServices(services => services.AddMarten(options =>
-            {
-                options.Connection(DatabaseFixture.ConnectionString);
-                options.AutoCreateSchemaObjects = AutoCreate.All;
-            })).Build().Services;
+                .ConfigureServices(services => services.AddMarten(options =>
+                {
+                    options.Connection(DatabaseFixture.ConnectionString);
+                    options.AutoCreateSchemaObjects = AutoCreate.All;
+                })).Build().Services;
 
             DocumentSession = Services.GetRequiredService<IDocumentSession>();
         }

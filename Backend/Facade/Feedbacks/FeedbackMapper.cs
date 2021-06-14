@@ -40,8 +40,7 @@ namespace Facade.Feedbacks
             {
                 Description = input.Description,
                 DueDate = input.DueDate,
-                DateAdded = DateTime.Now,
-                DateChanged = DateTime.Now
+                DateAdded = DateTime.Now
             };
             return new Feedback(d);
         }
@@ -50,7 +49,6 @@ namespace Facade.Feedbacks
             feedbackToUpdate.Data.Description = update.Description;
             feedbackToUpdate.Data.DueDate = update.DueDate;
             feedbackToUpdate.Data.Completed = update.Completed;
-            feedbackToUpdate.Data.DateChanged = DateTime.Now;
 
             return feedbackToUpdate;
         }
