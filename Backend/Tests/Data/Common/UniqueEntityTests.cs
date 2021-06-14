@@ -1,6 +1,5 @@
 ﻿using Data.Common;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
 using AutoFixture;
 
 namespace Tests.Data.Common

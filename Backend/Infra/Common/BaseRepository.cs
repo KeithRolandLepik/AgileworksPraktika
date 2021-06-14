@@ -60,7 +60,7 @@ namespace Infra.Common
         {
             await using var session = _store.LightweightSession();
 
-            session.Store<TData>(obj.Data);
+            session.Store(obj.Data);
 
             await session.SaveChangesAsync();
         }

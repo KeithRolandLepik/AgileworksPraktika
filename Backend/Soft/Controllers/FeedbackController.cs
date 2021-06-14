@@ -20,11 +20,11 @@ namespace Soft.Controllers
         [HttpGet]
         public async Task<ActionResult<List<FeedbackModel>>> GetFeedbacks()
         {
-            var list = await _repository.Get();
+            var feedbackList = await _repository.Get();
 
-            var viewList = list.Select(FeedbackMapper.MapToModel).ToList();
+            var feedbackModelList = feedbackList.Select(FeedbackMapper.MapToModel).ToList();
 
-            return viewList;
+            return feedbackModelList;
         }
 
         [HttpGet("{id}")]
