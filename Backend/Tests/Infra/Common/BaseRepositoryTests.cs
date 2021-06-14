@@ -1,5 +1,6 @@
 ﻿using Data.Feedbacks;
 using Domain.Feedbacks;
+using Facade.Feedbacks;
 using Infra.Common;
 using Marten;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -9,94 +10,115 @@ namespace Tests.Infra.Common
     [TestClass]
     public class BaseRepositoryTests : RepositoryTests
     {
-        protected FeedbackData data;
-        private TestClass obj;
+        protected FeedbackData EntityData;
+        internal TestClass Object;
 
-        private class TestClass : BaseRepository<Feedback, FeedbackData>
+        internal class TestClass : BaseRepository<Feedback, FeedbackData>
         {
             public TestClass(IDocumentSession documentSession) : base(documentSession) { }
 
-            protected override FeedbackData copyData(FeedbackData d)
+            protected override FeedbackData copyData(FeedbackData entityData)
             {
-                var x = new FeedbackData
-                {
-                    Id = d.Id,
-                    DueDate = d.DueDate,
-                    DateAdded = d.DateAdded,
-                    Overdue = d.Overdue,
-                    Completed = d.Completed,
-                    Description = d.Description
-                };
-                return x;
+                return
+                    new FeedbackData
+                    {
+                        Id = entityData.Id,
+                        DueDate = entityData.DueDate,
+                        Description = entityData.Description,
+                        DateAdded = entityData.DateAdded,
+                        Completed = entityData.Completed,
+                        Overdue = entityData.Overdue
+                    };
             }
 
-            protected override Feedback toDomainObject(FeedbackData d) => new Feedback(d);
-
+            protected override Feedback toDomainObject(FeedbackData entityData) => new Feedback(entityData);
         }
 
         [TestInitialize]
         public void TestInitialize()
         {
             InitializeTestDatabase();
-            obj = new TestClass(_documentSession);
-            data = GetRandom.FeedbackData();
+            Object = new TestClass(DocumentSession);
+            EntityData = GetRandom.FeedbackData();
         }
+
         [TestMethod]
-        public void GetTest()
+        public void Get_should_retrieve_all_feedbacks_from_database()
         {
             var count = GetRandom.RndInteger(1, 10);
-            var countBefore = obj.Get().GetAwaiter().GetResult().Count;
-
+            
+            // Act
+            var initialCount = Object.Get().GetAwaiter().GetResult().Count;
             for (int i = 0; i < count; i++)
             {
-                data = GetRandom.FeedbackData();
-                AddTest();
+                EntityData = GetRandom.FeedbackData();
+                Add_should_store_a_feedback_in_database();
             }
+            var finalCount = Object.Get().GetAwaiter().GetResult().Count;
 
-            Assert.AreEqual(count + countBefore, obj.Get().GetAwaiter().GetResult().Count);
+            // Assert
+            Assert.AreEqual(count + initialCount, finalCount);
         }
+
         [TestMethod]
-        public void DeleteTest()
+        public void Delete_should_remove_entity_from_database()
         {
-            AddTest();
-            var count = obj.Get().GetAwaiter().GetResult().Count;
-            var expected = obj.Get(data.Id).GetAwaiter().GetResult();
-            TestArePropertyValuesEqual(expected.Data, data);
+            // Act
+            Add_should_store_a_feedback_in_database();
+            var count = Object.Get().GetAwaiter().GetResult().Count;
+            var feedbackToBeDeleted = Object.Get(EntityData.Id).GetAwaiter().GetResult();
+            TestArePropertyValuesEqual(feedbackToBeDeleted.Data, EntityData);
+            Object.Delete(EntityData.Id).GetAwaiter().GetResult();
+            var newCount = Object.Get().GetAwaiter().GetResult().Count;
+            feedbackToBeDeleted = Object.Get(EntityData.Id).GetAwaiter().GetResult();
 
-            obj.Delete(data.Id).GetAwaiter().GetResult();
-            var newCount = obj.Get().GetAwaiter().GetResult().Count;
-            expected = obj.Get(data.Id).GetAwaiter().GetResult();
-
-            Assert.IsNull(expected.Data);
+            // Assert
+            Assert.IsNull(feedbackToBeDeleted.Data);
             Assert.AreNotEqual(count, newCount);
         }
-        [TestMethod]
-        public void AddTest()
-        {
-            var expected = obj.Get(data.Id).GetAwaiter().GetResult();
-            Assert.IsNull(expected.Data);
-            expected = obj.Add(new Feedback(data)).GetAwaiter().GetResult();
-            TestArePropertyValuesEqual(expected.Data, data);
-            data = expected.Data;
 
+        [TestMethod]
+        public void Add_should_store_a_feedback_in_database()
+        {
+            var feedbackInput = new FeedbackInput()
+            {
+                Description = GetRandom.RndInteger(1,1000).ToString(),
+                DueDate = GetRandom.Datetime(),
+            };
+            var entityToBeAdded = FeedbackMapper.MapToDomainFromInput(feedbackInput);
+            EntityData = entityToBeAdded.Data;
+
+            // Act
+            var initialDatabaseFeedback = Object.Get(EntityData.Id).GetAwaiter().GetResult();
+            var addedFeedback = Object.Add(entityToBeAdded).GetAwaiter().GetResult();
+
+            // Assert
+            Assert.IsNull(initialDatabaseFeedback.Data);
+            TestArePropertyValuesEqual(addedFeedback.Data, EntityData);
+
+            EntityData = addedFeedback.Data;
         }
+
         [TestMethod]
         public void UpdateTest()
         {
-            AddTest();
-            var newData = GetRandom.FeedbackData();
-            var entityToUpdate = obj.Get(data.Id).GetAwaiter().GetResult();
+            Add_should_store_a_feedback_in_database();
+            var newFeedbackUpdate = new FeedbackUpdate
+                {
+                    Completed = true,
+                    Description = GetRandom.RndInteger(1,100).ToString(),
+                    DueDate = GetRandom.Datetime(),
+                };
 
-            entityToUpdate.Data.DueDate = newData.DueDate;
-            entityToUpdate.Data.Completed = newData.Completed;
-            entityToUpdate.Data.DateAdded = newData.DateAdded;
-            entityToUpdate.Data.Description = newData.Description;
-            entityToUpdate.Data.Overdue = newData.Overdue;
+            // Act
+            var initialFeedbackData = Object.Get(EntityData.Id).GetAwaiter().GetResult().Data;
+            var feedbackToUpdate = FeedbackMapper.MapToDomainFromUpdate(new Feedback(initialFeedbackData), newFeedbackUpdate);
+            //Object.Update(feedbackToUpdate).GetAwaiter().GetResult();
+            var updatedFeedback = Object.Get(initialFeedbackData.Id).GetAwaiter().GetResult();
 
-            obj.Update(entityToUpdate).GetAwaiter().GetResult();
-            var expected = obj.Get(entityToUpdate.Data.Id).GetAwaiter().GetResult();
-
-            TestArePropertyValuesEqual(expected.Data, entityToUpdate.Data);
+            // Assert
+            TestArePropertyValuesEqual(updatedFeedback.Data, feedbackToUpdate.Data);
         }
+
     }
 }

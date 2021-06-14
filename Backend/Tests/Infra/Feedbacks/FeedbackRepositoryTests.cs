@@ -9,15 +9,15 @@ namespace Tests.Infra.Feedbacks
     public class FeedbackRepositoryTests : RepositoryTests
     {
 
-        protected FeedbackData data;
-        protected FeedbackRepository obj;
-        protected int count;
+        protected FeedbackData EntityData;
+        protected FeedbackRepository Object;
+        protected int Count;
 
         [TestInitialize]
         public void TestInitialize()
         {
             InitializeTestDatabase();
-            obj = new FeedbackRepository(_documentSession);
+            Object = new FeedbackRepository(DocumentSession);
         }
     }
 }

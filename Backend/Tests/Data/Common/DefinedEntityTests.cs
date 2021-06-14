@@ -8,29 +8,33 @@ namespace Tests.Data.Common
     public class DefinedEntityTests : BaseClassTests<DefinedEntityData, UniqueEntityData>
     {
         private class TestClass : DefinedEntityData { }
+
         [TestInitialize]
         public override void TestInitialize()
         {
             base.TestInitialize();
-            obj = new TestClass();
-
+            Object = new TestClass();
         }
+
         [TestMethod]
-        public void IsAbstract()
+        public void DefinedEntityData_should_be_abstract()
         {
-            Assert.IsTrue(type.IsAbstract);
+            // Assert
+            Assert.IsTrue(Type.IsAbstract);
         }
+
         [TestMethod]
-        public void DescriptionTest()
+        public void Description_should_be_settable_and_gettable()
         {
-            Random rnd = new Random();
-            var val = rnd.Next(1, 10).ToString();
+            var randomValue = GetRandom.RndInteger(1, 10).ToString();
 
-            Assert.AreNotEqual(obj.Description, val);
+            // Act
+            var initialDescriptionValue = Object.Description;
+            Object.Description = randomValue;
 
-            obj.Description = val;
-            Assert.AreEqual(obj.Description, val);
-
+            // Assert
+            Assert.AreNotEqual(initialDescriptionValue, randomValue);
+            Assert.AreEqual(Object.Description, randomValue);
         }
     }
 }

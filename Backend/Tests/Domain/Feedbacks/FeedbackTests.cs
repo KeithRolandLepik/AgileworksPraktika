@@ -10,14 +10,19 @@ namespace Tests.Domain.Feedbacks
     public class FeedbackTests : BaseClassTests<Feedback, Entity<FeedbackData>>
     {
         [TestMethod]
-        public void CheckOverDueTest()
+        public void Feedback_on_creation_should_calculate_and_set_overdue_value()
         {
-            var d = new FeedbackData { Id = 1, Description = "asd", Completed = false, Overdue = false, DateAdded = DateTime.Now, DueDate = DateTime.Now.AddHours(50)};
-            obj = new Feedback(d);
-            Assert.IsFalse(obj.Data.Overdue);
-            d.DueDate = DateTime.Now.AddHours(-50);
-            obj = new Feedback(d);
-            Assert.IsTrue(obj.Data.Overdue);
+            var entityData = new FeedbackData { Id = 1, Description = "asd", Completed = false, Overdue = false, DateAdded = DateTime.Now, DueDate = DateTime.Now.AddHours(50) };
+
+            // Act
+            Object = new Feedback(entityData);
+            var overDueBefore = Object.Data.Overdue;
+            entityData.DueDate = DateTime.Now.AddHours(-50);
+            Object = new Feedback(entityData);
+
+            // Assert
+            Assert.IsFalse(overDueBefore);
+            Assert.IsTrue(Object.Data.Overdue);
         }
     }
 }

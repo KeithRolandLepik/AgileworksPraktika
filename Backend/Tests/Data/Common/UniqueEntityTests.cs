@@ -8,29 +8,33 @@ namespace Tests.Data.Common
     public class UniqueEntityTests : BaseClassTests<UniqueEntityData, object>
     {
         private class TestClass : UniqueEntityData { }
+
         [TestInitialize]
         public override void TestInitialize()
         {
             base.TestInitialize();
-            obj = new TestClass();
-
+            Object = new TestClass();
         }
+
         [TestMethod]
-        public void IsAbstract()
+        public void UniqueEntityData_should_be_abstract()
         {
-            Assert.IsTrue(type.IsAbstract);
+            // Assert
+            Assert.IsTrue(Type.IsAbstract);
         }
+
         [TestMethod]
-        public void IdTest()
+        public void Id_should_be_gettable_and_settable()
         {
-            Random rnd = new Random();
-            var val = rnd.Next(1, 10);
+            var randomValue = GetRandom.RndInteger(1, 10);
 
-            Assert.AreNotEqual(obj.Id, val);
+            // Act
+            var initialIdValue = Object.Id;
+            Object.Id = randomValue;
 
-            obj.Id = val;
-            Assert.AreEqual(obj.Id, val);
-
+            // Assert
+            Assert.AreNotEqual(initialIdValue, randomValue);
+            Assert.AreEqual(Object.Id, randomValue);
         }
     }
 }

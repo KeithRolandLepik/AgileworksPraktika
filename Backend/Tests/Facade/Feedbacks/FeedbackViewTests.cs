@@ -12,41 +12,62 @@ namespace Tests.Facade.Feedbacks
         public override void TestInitialize()
         {
             base.TestInitialize();
-            obj = new TestClass();
+            Object = new TestClass();
             
         }
         [TestMethod]
-        public void DueDateTest()
+        public void DueDate_should_be_gettable_and_settable()
         {
-            var val = GetRandom.Datetime();
+            var randomValue = GetRandom.Datetime();
 
-            Assert.AreNotEqual(obj.DueDate, val);
-            obj.DueDate = val;
-            Assert.AreEqual(obj.DueDate, val);
+            // Act
+            var initialDueDateValue = Object.DueDate;
+            Object.DueDate = randomValue;
+
+            // Assert
+            Assert.AreNotEqual(initialDueDateValue, randomValue);
+            Assert.AreEqual(Object.DueDate, randomValue);
+
         }
+
         [TestMethod]
-        public void DateAddedTest()
+        public void DateAdded_should_be_gettable_and_settable()
         {
-            var val = GetRandom.Datetime();
-            Assert.AreNotEqual(obj.DateAdded, val);
-            obj.DateAdded = val;
-            Assert.AreEqual(obj.DateAdded, val);
+            var randomValue = GetRandom.Datetime();
+
+            // Act
+            var initialDateAddedValue = Object.DateAdded;
+            Object.DateAdded = randomValue;
+
+            // Assert
+            Assert.AreNotEqual(initialDateAddedValue, randomValue);
+            Assert.AreEqual(Object.DateAdded, randomValue);
         }
+
         [TestMethod]
-        public void CompletedTest()
+        public void Completed_should_be_gettable_and_settable()
         {
-            var val = GetRandom.Bool();
-            Assert.AreNotEqual(obj.Completed, val);
-            obj.Completed = val;
-            Assert.AreEqual(obj.Completed, val);
+            // Act
+            var initialCompletedValue = Object.Completed;
+            Object.Completed = true;
+
+            // Assert
+            Assert.AreEqual(initialCompletedValue, false);
+            Assert.AreEqual(Object.Completed, true);
         }
+
         [TestMethod]
-        public void OverdueTest()
+        public void Overdue_should_be_gettable_and_settable()
         {
-            var val = GetRandom.Bool();
-            Assert.AreNotEqual(obj.Overdue, val);
-            obj.Overdue = val;
-            Assert.AreEqual(obj.Overdue, val);
+            var randomValue = GetRandom.Bool();
+
+            // Act
+            var initialOverdueValue = Object.Overdue;
+            Object.Overdue = randomValue;
+
+            // Assert
+            Assert.AreNotEqual(initialOverdueValue, randomValue);
+            Assert.AreEqual(Object.Overdue, randomValue);
         }
     }
 }

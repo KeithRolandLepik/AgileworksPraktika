@@ -11,16 +11,17 @@ namespace Infra.Feedbacks
 
         protected override FeedbackData copyData(FeedbackData data)
         {
-            var x = new FeedbackData();
-            x.Id = data.Id;
-            x.DueDate = data.DueDate;
-            x.Description = data.Description;
-            x.DateAdded = data.DateAdded;
-            x.Completed = data.Completed;
-            x.Overdue = data.Overdue;
-            return x;
+            return 
+                new FeedbackData {
+                    Id = data.Id,
+                    DueDate = data.DueDate,
+                    Description = data.Description,
+                    DateAdded = data.DateAdded,
+                    Completed = data.Completed,
+                    Overdue = data.Overdue
+                };
         }
 
-        protected internal override Feedback toDomainObject(FeedbackData d) => new Feedback(d);
+        protected internal override Feedback toDomainObject(FeedbackData entityData) => new Feedback(entityData);
     }
 }

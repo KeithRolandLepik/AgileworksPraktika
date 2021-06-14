@@ -27,9 +27,9 @@ namespace Infra.Common
 
         public async Task<TDomain> Get(int id)
         {
-            var d = await _documentSession.Query<TData>().FirstOrDefaultAsync(x => x.Id == id);
-
-            return toDomainObject(d);
+            var entityData = _documentSession.Load<TData>(id);
+            
+            return toDomainObject(entityData);
         }
 
         public async Task Delete(int id)
@@ -44,9 +44,9 @@ namespace Infra.Common
             
             await _documentSession.SaveChangesAsync();
 
-            var d = await _documentSession.Query<TData>().FirstOrDefaultAsync(x => x.Id == obj.Data.Id);
+            var entityData = await _documentSession.Query<TData>().FirstOrDefaultAsync(x => x.Id == obj.Data.Id);
             
-            return toDomainObject(d);
+            return toDomainObject(entityData);
         }
 
         public async Task Update(TDomain obj)
@@ -56,11 +56,11 @@ namespace Infra.Common
             await _documentSession.SaveChangesAsync();
         }
 
-        protected abstract TData copyData(TData data);
+        protected abstract TData copyData(TData entityData);
 
         internal List<TDomain> toDomainObjectsList(IEnumerable<TData> set) => set.Select(toDomainObject).ToList();
 
-        protected internal abstract TDomain toDomainObject(TData UniqueEntityData);
+        protected internal abstract TDomain toDomainObject(TData entityData);
 
     }
 }

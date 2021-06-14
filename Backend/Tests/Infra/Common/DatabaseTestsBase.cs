@@ -8,25 +8,25 @@ using Weasel.Postgresql;
 
 namespace Tests.Infra.Common
 {
-    public class TestDatabaseInitializer : BaseTests
+    public class DatabaseTestsBase : BaseTests
     {
-        internal DatabaseFixture _databaseFixture;
-        internal IServiceProvider _services;
-        internal IDocumentSession _documentSession;
+        internal DatabaseFixture DatabaseFixture;
+        internal IServiceProvider Services;
+        internal IDocumentSession DocumentSession;
 
         public void InitializeTestDatabase()
         {
-            _databaseFixture = new DatabaseFixture(
+            DatabaseFixture = new DatabaseFixture(
             TestConnectionStringSource.GenerateConnectionString());
 
-            _services = Program.CreateHostBuilder(Array.Empty<string>())
+            Services = Program.CreateHostBuilder(Array.Empty<string>())
             .ConfigureServices(services => services.AddMarten(options =>
             {
-                options.Connection(_databaseFixture.ConnectionString);
+                options.Connection(DatabaseFixture.ConnectionString);
                 options.AutoCreateSchemaObjects = AutoCreate.All;
             })).Build().Services;
 
-            _documentSession = _services.GetRequiredService<IDocumentSession>();
+            DocumentSession = Services.GetRequiredService<IDocumentSession>();
         }
     }
 }

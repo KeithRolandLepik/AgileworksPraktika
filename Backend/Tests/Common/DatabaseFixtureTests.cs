@@ -7,7 +7,7 @@ using Tests.Infra.Common;
 namespace Tests.Common
 {
     [TestClass]
-    public class DatabaseFixtureTests : TestDatabaseInitializer
+    public class DatabaseFixtureTests : DatabaseTestsBase
     {
         [TestMethod]
         public void InitializeTestDatabase_should_open_connection_and_create_new_database()
@@ -17,10 +17,10 @@ namespace Tests.Common
             // Act
             InitializeTestDatabase();
             var afterDatabaseCount = GetAllNpgsqlDatabasesList().ToList().Count();
-            var databaseName = _databaseFixture.NpgsqlConnection.Database;
+            var databaseName = DatabaseFixture.NpgsqlConnection.Database;
 
             // Assert
-            Assert.AreEqual(_databaseFixture.NpgsqlConnection.State.ToString().ToLower(), "open");
+            Assert.AreEqual(DatabaseFixture.NpgsqlConnection.State.ToString().ToLower(), "open");
             Assert.AreEqual(afterDatabaseCount, initialDatabaseCount+1);
             Assert.IsTrue(GetAllNpgsqlDatabasesList().ToList().Contains(databaseName));
         }
@@ -31,12 +31,12 @@ namespace Tests.Common
             // Act
             InitializeTestDatabase();
             var initialDatabaseCount = GetAllNpgsqlDatabasesList().ToList().Count();
-            var databaseName = _databaseFixture.NpgsqlConnection.Database;
-            _databaseFixture.Dispose();
+            var databaseName = DatabaseFixture.NpgsqlConnection.Database;
+            DatabaseFixture.Dispose();
             var afterDatabaseCount = GetAllNpgsqlDatabasesList().ToList().Count();
 
             // Assert
-            Assert.AreEqual(_databaseFixture.NpgsqlConnection.State.ToString().ToLower(), "closed");
+            Assert.AreEqual(DatabaseFixture.NpgsqlConnection.State.ToString().ToLower(), "closed");
             Assert.AreEqual(afterDatabaseCount, initialDatabaseCount - 1);
             Assert.IsFalse(GetAllNpgsqlDatabasesList().ToList().Contains(databaseName));
         }
@@ -71,7 +71,7 @@ namespace Tests.Common
         [TestCleanup]
         public void Cleanup()
         {
-            _databaseFixture.Dispose();
+            DatabaseFixture.Dispose();
         }
     }
 }

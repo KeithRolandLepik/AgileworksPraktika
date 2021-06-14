@@ -8,24 +8,26 @@ namespace Tests.Facade.Common
     public class DefinedEntityViewTests : BaseClassTests<DefinedEntityView, UniqueEntityView>
     {
         private class TestClass : DefinedEntityView { }
+
         [TestInitialize]
         public override void TestInitialize()
         {
             base.TestInitialize();
-            obj = new TestClass();
-
+            Object = new TestClass();
         }
+
         [TestMethod]
-        public void DescriptionTest()
+        public void Description_should_be_gettable_and_settable()
         {
-            Random rnd = new Random();
-            var val = rnd.Next(1, 10).ToString();
+            var randomDescriptionValue = GetRandom.RndInteger(1, 10).ToString();
 
-            Assert.AreNotEqual(obj.Description, val);
+            // Act
+            var initialDescriptionValue = Object.Description;
+            Object.Description = randomDescriptionValue;
 
-            obj.Description = val;
-            Assert.AreEqual(obj.Description, val);
-
+            // Assert
+            Assert.AreNotEqual(Object.Description, initialDescriptionValue);
+            Assert.AreEqual(Object.Description, randomDescriptionValue);
         }
     }
 }

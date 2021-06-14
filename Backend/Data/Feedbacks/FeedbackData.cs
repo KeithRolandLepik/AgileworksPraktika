@@ -9,5 +9,6 @@ namespace Data.Feedbacks
         public DateTime DueDate { get; set; }
         public Boolean Completed { get; set; }
         public Boolean Overdue { get; set; }
+        public DateTime DateChanged { get; set; }
     }
 }

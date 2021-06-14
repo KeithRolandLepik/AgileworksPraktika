@@ -7,7 +7,6 @@
   <ItemGroup>
     <PackageReference Include="Marten" Version="4.0.0-rc.2" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.0-preview.4.21253.1" />
     <PackageReference Include="Npgsql" Version="6.0.0-preview4" />
   </ItemGroup>
 

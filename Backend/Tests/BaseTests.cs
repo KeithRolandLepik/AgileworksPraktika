@@ -5,7 +5,7 @@ namespace Tests
 {
     public abstract class BaseTests
     {
-        protected Type type;
+        protected Type Type;
         protected static void TestArePropertyValuesEqual(object obj1, object obj2)
         {
             foreach (var property in obj1.GetType().GetProperties())

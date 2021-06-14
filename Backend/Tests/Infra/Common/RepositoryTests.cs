@@ -3,12 +3,12 @@
 namespace Tests.Infra.Common
 {
     [TestClass]
-    public class RepositoryTests : TestDatabaseInitializer
+    public class RepositoryTests : DatabaseTestsBase
     {
         [TestCleanup]
         public void Cleanup()
         {
-            _databaseFixture.Dispose();
+            DatabaseFixture.Dispose();
         }
     }
 }

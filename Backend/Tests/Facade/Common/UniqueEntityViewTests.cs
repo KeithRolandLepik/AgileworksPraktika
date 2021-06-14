@@ -8,24 +8,27 @@ namespace Tests.Facade.Common
     public class UniqueEntityViewTests : BaseClassTests<UniqueEntityView, object>
     {
         private class TestClass : UniqueEntityView { }
+
         [TestInitialize]
         public override void TestInitialize()
         {
             base.TestInitialize();
-            obj = new TestClass();
+            Object = new TestClass();
 
         }
+
         [TestMethod]
-        public void DescriptionTest()
+        public void Id_should_be_gettable_and_settable()
         {
-            Random rnd = new Random();
-            var val = rnd.Next(1, 10);
+            var randomIdValue = GetRandom.RndInteger(1, 10);
 
-            Assert.AreNotEqual(obj.Id, val);
+            // Act
+            var initialIdValue = Object.Id;
+            Object.Id = randomIdValue;
 
-            obj.Id = val;
-            Assert.AreEqual(obj.Id, val);
-
+            // Assert
+            Assert.AreNotEqual(Object.Id, initialIdValue);
+            Assert.AreEqual(Object.Id, randomIdValue);
         }
     }
 }
