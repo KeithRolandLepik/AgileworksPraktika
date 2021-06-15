@@ -1,6 +1,6 @@
 ﻿namespace Facade.Common
 {
-    public class DefinedEntityView : UniqueEntityView
+    public class DefinedEntityModel : UniqueEntityModel
     {
         public string Description { get; set; }
     }

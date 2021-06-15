@@ -1,4 +1,6 @@
-﻿using Data.Common;
+﻿using System;
+using AutoFixture;
+using Data.Common;
 using Data.Feedbacks;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
@@ -8,43 +10,68 @@ namespace Tests.Data.Feedbacks
     public class FeedbackDataTests : BaseClassTests<FeedbackData, DefinedEntityData>
     {
         private class TestClass : FeedbackData { }
+
         [TestInitialize]
         public override void TestInitialize()
         {
             base.TestInitialize();
-            obj = new TestClass();
+            Object = new TestClass();
+            Fixture = new Fixture();
         }
-        [TestMethod]
-        public void DueDateTest()
-        {
-            var val = GetRandom.Datetime();
 
-            Assert.AreNotEqual(obj.DueDate, val);
-            obj.DueDate = val;
-            Assert.AreEqual(obj.DueDate, val);
-        }
         [TestMethod]
-        public void DateAddedTest()
+        public void DueDate_should_be_gettable_and_settable()
         {
-            var val = GetRandom.Datetime();
-            Assert.AreNotEqual(obj.DateAdded, val);
-            obj.DateAdded = val;
-            Assert.AreEqual(obj.DateAdded, val);
+            var randomValue = Fixture.Create<DateTime>();
+
+            // Act
+            var initialDueDateValue = Object.DueDate;
+            Object.DueDate = randomValue;
+
+            // Assert
+            Assert.AreNotEqual(initialDueDateValue, randomValue);
+            Assert.AreEqual(Object.DueDate, randomValue);
+
         }
+
         [TestMethod]
-        public void CompletedTest()
+        public void DateAdded_should_be_gettable_and_settable()
         {
-            Assert.AreEqual(obj.Completed, false);
-            obj.Completed = true;
-            Assert.AreEqual(obj.Completed, true);
+            var randomValue = Fixture.Create<DateTime>();
+
+            // Act
+            var initialDateAddedValue = Object.DateAdded;
+            Object.DateAdded = randomValue;
+
+            // Assert
+            Assert.AreNotEqual(initialDateAddedValue, randomValue);
+            Assert.AreEqual(Object.DateAdded, randomValue);
         }
+
         [TestMethod]
-        public void OverdueTest()
+        public void Completed_should_be_gettable_and_settable()
         {
-            var val = GetRandom.Bool();
-            Assert.AreNotEqual(obj.Overdue, val);
-            obj.Overdue = val;
-            Assert.AreEqual(obj.Overdue, val);
+            // Act
+            var initialCompletedValue = Object.IsCompleted;
+            Object.IsCompleted = true;
+
+            // Assert
+            Assert.AreEqual(initialCompletedValue, false);
+            Assert.AreEqual(Object.IsCompleted, true);
+        }
+
+        [TestMethod]
+        public void Overdue_should_be_gettable_and_should_calculate_value()
+        {
+            // Act
+            Object.DueDate = DateTime.Now;
+            var overDue = Object.IsOverdue;
+            Object.DueDate = DateTime.Now.AddDays(599);
+            var notOverDue = Object.IsOverdue;
+
+            // Assert
+            Assert.IsTrue(overDue);
+            Assert.IsFalse(notOverDue);
         }
     }
 }

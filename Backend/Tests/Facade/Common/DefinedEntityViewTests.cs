@@ -1,31 +1,33 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
+using AutoFixture;
 using Facade.Common;
 
 namespace Tests.Facade.Common
 {
     [TestClass]
-    public class DefinedEntityViewTests : BaseClassTests<DefinedEntityView, UniqueEntityView>
+    public class DefinedEntityViewTests : BaseClassTests<DefinedEntityModel, UniqueEntityModel>
     {
-        private class TestClass : DefinedEntityView { }
+        private class TestClass : DefinedEntityModel { }
+
         [TestInitialize]
         public override void TestInitialize()
         {
             base.TestInitialize();
-            obj = new TestClass();
-
+            Object = new TestClass();
         }
+
         [TestMethod]
-        public void DescriptionTest()
+        public void Description_should_be_gettable_and_settable()
         {
-            Random rnd = new Random();
-            var val = rnd.Next(1, 10).ToString();
+            var randomDescriptionValue = Fixture.Create<string>();
 
-            Assert.AreNotEqual(obj.Description, val);
+            // Act
+            var initialDescriptionValue = Object.Description;
+            Object.Description = randomDescriptionValue;
 
-            obj.Description = val;
-            Assert.AreEqual(obj.Description, val);
-
+            // Assert
+            Assert.AreNotEqual(Object.Description, initialDescriptionValue);
+            Assert.AreEqual(Object.Description, randomDescriptionValue);
         }
     }
 }

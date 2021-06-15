@@ -10,47 +10,59 @@ namespace Tests.Domain.Common
     {
         private class testClass : Entity<FeedbackData>
         {
-            public testClass(FeedbackData d = null) : base(d) { }
+            public testClass(FeedbackData entityData = null) : base(entityData) { }
         }
 
         [TestInitialize]
         public override void TestInitialize()
         {
             base.TestInitialize();
-            obj = new testClass();
+            Object = new testClass();
         }
 
         [TestMethod]
-        public void IsAbstract()
+        public void Entity_should_be_abstract()
         {
-            Assert.IsTrue(type.IsAbstract);
+            // Assert
+            Assert.IsTrue(Type.IsAbstract);
         }
 
         [TestMethod]
-        public void DataTest()
+        public void New_entity_data_should_set_value_from_parameter()
         {
-            var d = new FeedbackData{ Id = 1, Description = "asd", Completed = false, Overdue = false, DateAdded = DateTime.Now, DueDate = new DateTime(2021, 6, 6, 20, 40, 0) };
+            var entityData = new FeedbackData { Id = 1, Description = "asd", IsCompleted = false, DateAdded = DateTime.Now, DueDate = new DateTime(2021, 6, 6, 20, 40, 0) };
 
-            Assert.AreNotSame(d, obj.Data);
-            obj = new testClass(d);
-            Assert.AreSame(d, obj.Data);
+            // Act
+            var initialEntityData = Object.Data;
+            Object = new testClass(entityData);
+
+            // Assert
+            Assert.AreNotSame(entityData, initialEntityData);
+            AssertArePropertyValuesEqual(Object.Data, entityData);
         }
 
         [TestMethod]
-        public void DataIsNullTest()
+        public void Entity_data_should_be_null_before_setting_and_have_value_after_setting()
         {
-            var d = new FeedbackData { Id = 1, Description = "asd", Completed = false, Overdue = false, DateAdded = DateTime.Now, DueDate = new DateTime(2021, 6, 6, 20, 40, 0) };
+            var entityData = new FeedbackData { Id = 1, Description = "asd", IsCompleted = false, DateAdded = DateTime.Now, DueDate = new DateTime(2021, 6, 6, 20, 40, 0) };
 
-            Assert.IsNull(obj.Data);
-            obj.Data = d;
-            Assert.AreSame(d, obj.Data);
+            // Act
+            var initialEntityData = Object.Data;
+            Object.Data = entityData;
+
+            // Assert
+            Assert.IsNull(initialEntityData);
+            AssertArePropertyValuesEqual(Object.Data, entityData);
         }
 
         [TestMethod]
-        public void CanSetNullDataTest()
+        public void Entity_data_can_be_null()
         {
-            obj.Data = null;
-            Assert.IsNull(obj.Data);
+            // Act
+            Object.Data = null;
+
+            // Assert
+            Assert.IsNull(Object.Data);
         }
     }
 }

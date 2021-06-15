@@ -1,145 +1,144 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
+using AutoFixture;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Soft.Controllers;
 using Microsoft.AspNetCore.Mvc;
-using Data.Feedbacks;
 using Infra.Feedbacks;
-using Microsoft.EntityFrameworkCore;
 using Facade.Feedbacks;
-using Domain.Feedbacks;
+using Tests.Infra.Common;
 
 namespace Tests.Soft.Controllers
 {
     [TestClass]
-    public class FeedbackControllerTests : BaseClassTests<FeedbackController, ControllerBase>
+    public class FeedbackControllerTests : DatabaseTestsBase
     {
-        protected FeedbackDbContext db;
-        protected IFeedbackRepository repo;
-        protected int count;
+        protected FeedbackRepository Repository;
+        protected FeedbackController Controller;
+        protected int Count;
 
         [TestInitialize]
-        public override void TestInitialize()
+        public void TestInitialize()
         {
-            base.TestInitialize();
+            InitializeTestDatabase();
 
-            var options = new DbContextOptionsBuilder<FeedbackDbContext>().UseInMemoryDatabase("TestDb").Options;
-            db = new FeedbackDbContext(options);
-            repo = new FeedbackRepository(db);
-            obj = new FeedbackController(repo);
-
-            count = GetRandom.RndInteger(5, 10);
+            Repository = new FeedbackRepository(DocumentStore);
+            Controller = new FeedbackController(Repository);
+            Fixture = new Fixture();
+            Count = 20;
             AddFeedbacks();
         }
 
         [TestMethod]
-        public void GetFeedbacksTest()
+        public void GetFeedbacks_should_return_all_feedbacks()
         {
-            var results = obj.GetFeedbacks().GetAwaiter().GetResult();
+            // Act
+            var results = Controller.GetFeedbacks().GetAwaiter().GetResult();
 
-            Assert.AreEqual(results.Value.Count, db.FeedbackDatas.CountAsync().GetAwaiter().GetResult());
+            // Assert
+            Assert.AreEqual(results.Value.Count, Repository.Get().GetAwaiter().GetResult().Count);
         }
 
         [TestMethod]
-        public void GetFeedbackTest()
+        public void GetFeedback_should_return_a_feedback_and_response_code()
         {
-            var id = GetRandom.RndInteger(500, 1000);
-            var result = obj.GetFeedback(id).GetAwaiter().GetResult();
-            Assert.AreEqual(result.Result.GetType(), typeof(NotFoundResult));
+            var id = Fixture.Create<int>();
 
-            var results = obj.GetFeedbacks().GetAwaiter().GetResult();
+            // Act
+            var notFoundResult = Controller.GetFeedback(id).GetAwaiter().GetResult();
+            var results = Controller.GetFeedbacks().GetAwaiter().GetResult();
             id = results.Value[0].Id;
-            result = obj.GetFeedback(id).GetAwaiter().GetResult();
-            Assert.AreEqual(result.Result.GetType(), typeof(OkObjectResult));
-        }
-
-        [TestMethod]
-        public void PutFeedbackTest()
-        {
-            var results = obj.GetFeedbacks().GetAwaiter().GetResult();
-            var id = GetRandom.RndInteger(500, 1000);
-            var updateData1 = new FeedbackUpdate
-            {
-                Completed= true,
-                Description = "newTest",
-                DueDate = GetRandom.Datetime()
-            };
-            var put = obj.PutFeedback(id, updateData1).GetAwaiter().GetResult();
-            Assert.AreEqual(put.GetType(), typeof(BadRequestResult));
-
-
-            id = results.Value[0].Id;
-            Assert.IsNotNull(id);
-            var updateData2 = new FeedbackUpdate
-            {
-                DueDate = GetRandom.Datetime()
-            };
-            put = obj.PutFeedback(id, updateData2).GetAwaiter().GetResult();
-            Assert.AreEqual(put.GetType(), typeof(BadRequestResult));
-
-
-            var updateData3 = new FeedbackUpdate
-            {
-                Description = "newTest"
-            };
-            put = obj.PutFeedback(id, updateData3).GetAwaiter().GetResult();
-            Assert.AreEqual(put.GetType(), typeof(BadRequestResult));
-
-
-            var updateData4  = new FeedbackUpdate
-            {
-                Completed = false
-            };
-            put = obj.PutFeedback(id, updateData4).GetAwaiter().GetResult();
-            Assert.AreEqual(put.GetType(), typeof(BadRequestResult));
-
+            var okObjectResult= Controller.GetFeedback(id).GetAwaiter().GetResult();
             
-            put = obj.PutFeedback(id, updateData1).GetAwaiter().GetResult();
-            Assert.AreEqual(put.GetType(), typeof(OkResult));
+            // Assert
+            Assert.AreEqual(notFoundResult.Result.GetType(), typeof(NotFoundResult));
+            Assert.AreEqual(okObjectResult.Result.GetType(), typeof(OkObjectResult));
+
         }
 
         [TestMethod]
-        public void PostFeedbackTest()
+        public void PutFeedback_should_return_a_okResult_if_successful_or_badRequest_if_unsuccessful()
         {
-            //Getrandom tagastab 1995-st alates random date, aga uuel inputil peab olema date praegusets suurem
+            var id = Fixture.Create<int>();
+            var updateData1 = new UpdateFeedbackRequest
+            {
+                IsCompleted = true,
+                Description = "newTest1234141411",
+                DueDate = Fixture.Create<DateTime>()
+        };
+            var updateData2 = new UpdateFeedbackRequest
+            {
+                DueDate = Fixture.Create<DateTime>()
+    };
+            var updateData3 = new UpdateFeedbackRequest
+            {
+                Description = "newTest25151234351431234"
+            };
+            var updateData4 = new UpdateFeedbackRequest
+            {
+                IsCompleted = false
+            };
 
-            var inputData = new FeedbackInput { Description = "test", DueDate = GetRandom.Datetime() };
-            var result = obj.PostFeedback(inputData).GetAwaiter().GetResult();
-            Assert.AreEqual(result.Result.GetType(), typeof(CreatedAtActionResult));
+            // Act
+            var results = Controller.GetFeedbacks().GetAwaiter().GetResult();
+            var putResult1 = Controller.PutFeedback(id, updateData1).GetAwaiter().GetResult();
+            id = results.Value[0].Id;
+            var putResult2 = Controller.PutFeedback(id, updateData2).GetAwaiter().GetResult();
+            var putResult3 = Controller.PutFeedback(id, updateData3).GetAwaiter().GetResult();
+            var putResult4 = Controller.PutFeedback(id, updateData4).GetAwaiter().GetResult();
+            var putResult5 = Controller.PutFeedback(id, updateData1).GetAwaiter().GetResult();
 
-            var inputData2 = new FeedbackInput { Description = "test2" };
-            result = obj.PostFeedback(inputData2).GetAwaiter().GetResult();
-            Assert.AreEqual(result.Result.GetType(), typeof(BadRequestResult));
-
-            var inputData3 = new FeedbackInput { DueDate = GetRandom.Datetime() };
-            result = obj.PostFeedback(inputData3).GetAwaiter().GetResult();
-            Assert.AreEqual(result.Result.GetType(), typeof(BadRequestResult));
+            // Assert
+            Assert.IsNotNull(id);
+            Assert.AreEqual(putResult1.GetType(), typeof(BadRequestResult));
+            Assert.AreEqual(putResult2.GetType(), typeof(BadRequestResult));
+            Assert.AreEqual(putResult3.GetType(), typeof(BadRequestResult));
+            Assert.AreEqual(putResult4.GetType(), typeof(BadRequestResult));
+            Assert.AreEqual(putResult5.GetType(), typeof(OkResult));
         }
 
         [TestMethod]
-        public void DeleteFeedbackTest()
+        public void PostFeedback_should_return_createdAtActionResult_if_successful_or_badRequestResult_if_unSuccesful()
         {
-            var results = obj.GetFeedbacks().GetAwaiter().GetResult();
+            var inputData1 = new AddFeedbackRequest { Description = Fixture.Create<string>(), DueDate = Fixture.Create<DateTime>()
+            };
+            var inputData2 = new AddFeedbackRequest { Description = Fixture.Create<string>() };
+            var inputData3 = new AddFeedbackRequest { DueDate = Fixture.Create<DateTime>() };
+
+            // Act
+            var result1 = Controller.PostFeedback(inputData1).GetAwaiter().GetResult();
+            var result2 = Controller.PostFeedback(inputData2).GetAwaiter().GetResult();
+            var result3 = Controller.PostFeedback(inputData3).GetAwaiter().GetResult();
+
+            // Assert
+            Assert.AreEqual(result1.Result.GetType(), typeof(CreatedAtActionResult));
+            Assert.AreEqual(result2.Result.GetType(), typeof(BadRequestResult));
+            Assert.AreEqual(result3.Result.GetType(), typeof(BadRequestResult));
+        }
+
+        [TestMethod]
+        public void DeleteFeedback_should_return_noContentResult_if_successful_or_notFoundResult_if_unSuccessful()
+        {
+            var results = Controller.GetFeedbacks().GetAwaiter().GetResult();
             var countBefore = results.Value.Count;
-
-            var deleteResult = obj.DeleteFeedback(GetRandom.RndInteger(500, 1000)).GetAwaiter().GetResult();
-            Assert.AreEqual(deleteResult.GetType(), typeof(NotFoundResult));
-
             var id = results.Value[0].Id;
-            deleteResult = obj.DeleteFeedback(id).GetAwaiter().GetResult();
 
-            var countAfter = obj.GetFeedbacks().GetAwaiter().GetResult().Value.Count;
-            Assert.AreEqual(deleteResult.GetType(), typeof(NoContentResult));
+            // Act
+            var deleteResult = Controller.DeleteFeedback(Fixture.Create<int>()).GetAwaiter().GetResult();
+            var deleteResult2 = Controller.DeleteFeedback(id).GetAwaiter().GetResult();
+            var countAfter = Controller.GetFeedbacks().GetAwaiter().GetResult().Value.Count;
+            
+            // Assert
+            Assert.AreEqual(deleteResult.GetType(), typeof(NotFoundResult));
+            Assert.AreEqual(deleteResult2.GetType(), typeof(NoContentResult));
             Assert.AreEqual(countBefore - 1, countAfter);
         }
 
         public void AddFeedbacks()
         {
-            for (int i = 0; i < count; i++)
+            for (int i = 0; i < Count; i++)
             {
-                var inputData = new FeedbackInput { Description = "test" + i.ToString(), DueDate = GetRandom.Datetime()};
-                obj.PostFeedback(inputData).GetAwaiter();
+                var inputData = new AddFeedbackRequest { Description = Fixture.Create<string>(), DueDate = Fixture.Create<DateTime>() };
+                var l = Repository.Add(FeedbackMapper.MapToDomainFromAddRequest(inputData)).GetAwaiter().GetResult();
             }
         }
     }

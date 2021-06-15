@@ -1,103 +1,123 @@
-﻿using Data.Feedbacks;
+﻿using System;
+using AutoFixture;
+using Data.Feedbacks;
 using Domain.Feedbacks;
+using Facade.Feedbacks;
 using Infra.Common;
-using Infra.Feedbacks;
-using Microsoft.EntityFrameworkCore;
+using Marten;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 namespace Tests.Infra.Common
 {
     [TestClass]
-    public class BaseRepositoryTests : BaseClassTests<BaseRepository<Feedback, FeedbackData>, object>
+    public class BaseRepositoryTests : RepositoryTests
     {
-        protected FeedbackData data;
-        private class TestClass : BaseRepository<Feedback, FeedbackData>
+        protected FeedbackData EntityData;
+        internal TestClass Sut;
+
+        internal class TestClass : BaseRepository<Feedback, FeedbackData>
         {
-            public TestClass(DbContext c, DbSet<FeedbackData> s) : base(c, s)
-            {
+            public TestClass(IDocumentStore store) : base(store) { }
 
-            }
-
-            protected override FeedbackData copyData(FeedbackData d)
-            {
-                var x = getDataById(d);
-
-                if (x is null) return d;
-
-                x.Id = d.Id;
-                x.DueDate = d.DueDate;
-                x.DateAdded = d.DateAdded;
-                x.Overdue = d.Overdue;
-                x.Completed = d.Completed;
-                x.Description = d.Description;
-
-                return x;
-            }
-
-            protected override Feedback toDomainObject(FeedbackData d) => new Feedback(d);
-
-            protected override Feedback unspecifiedEntity() => new Feedback();
+            protected override Feedback ToDomainObject(FeedbackData entityData) => new Feedback(entityData);
         }
+
         [TestInitialize]
-        public override void TestInitialize()
+        public void TestInitialize()
         {
-            base.TestInitialize();
-            var options = new DbContextOptionsBuilder<FeedbackDbContext>().UseInMemoryDatabase("TestDb").Options;
-            var c = new FeedbackDbContext(options);
-            obj = new TestClass(c, c.FeedbackDatas);
-            data = GetRandom.FeedbackData();
+            Fixture = new Fixture();
+            InitializeTestDatabase();
+            Sut = new TestClass(DocumentStore);
+            EntityData = Fixture.Create<FeedbackData>();
         }
 
         [TestMethod]
-        public void GetTest()
+        public void Get_should_retrieve_all_feedbacks_from_database()
         {
-            var count = GetRandom.RndInteger(1, 10);
-            var countBefore = obj.Get().GetAwaiter().GetResult().Count;
+            var count = 20;
+            PopulateDatabase(count);
 
+            // Act
+            var initialCount = Sut.Get().GetAwaiter().GetResult().Count;
+            PopulateDatabase(count);
+            var finalCount = Sut.Get().GetAwaiter().GetResult().Count;
+
+            // Assert
+            Assert.AreEqual(count + initialCount, finalCount);
+        }
+
+        [TestMethod]
+        public void Delete_should_remove_entity_from_database()
+        {
+            PopulateDatabase(20);
+            // Act
+            var count = Sut.Get().GetAwaiter().GetResult().Count;
+            var feedbackToBeDeleted= Sut.Get().GetAwaiter().GetResult()[0];
+            Sut.Delete(feedbackToBeDeleted.Data.Id).GetAwaiter().GetResult();
+            var newCount = Sut.Get().GetAwaiter().GetResult().Count;
+            feedbackToBeDeleted = Sut.Get(feedbackToBeDeleted.Data.Id).GetAwaiter().GetResult();
+
+            // Assert
+            Assert.IsNull(feedbackToBeDeleted.Data);
+            Assert.AreEqual(count-newCount, 1);
+        }
+
+        [TestMethod]
+        public void Add_should_store_a_feedback_in_database()
+        {
+            var feedbackInput = new AddFeedbackRequest
+            {
+                Description = Fixture.Create<string>(),
+                DueDate = Fixture.Create<DateTime>(),
+            };
+            var entityToBeAdded = FeedbackMapper.MapToDomainFromAddRequest(feedbackInput);
+            
+            // Act
+            var initialDatabaseFeedback = Sut.Get(entityToBeAdded.Data.Id).GetAwaiter().GetResult();
+            var addedFeedback = Sut.Add(entityToBeAdded).GetAwaiter().GetResult();
+            
+            // Assert
+            Assert.IsNull(initialDatabaseFeedback.Data);
+            AssertArePropertyValuesEqual(addedFeedback.Data, entityToBeAdded.Data);
+
+            EntityData = addedFeedback.Data;
+        }
+
+        [TestMethod]
+        public void Update_should_update_existing_database_item()
+        {
+            PopulateDatabase(20);
+            
+            var newFeedbackUpdate = new UpdateFeedbackRequest
+                {
+                    IsCompleted = true,
+                    Description = Fixture.Create<string>(),
+                    DueDate = Fixture.Create<DateTime>()
+            };
+
+            // Act
+            var initialFeedbackData = Sut.Get().GetAwaiter().GetResult()[0];
+            var feedbackToUpdate = FeedbackMapper.MapToDomainFromUpdateRequest(initialFeedbackData, newFeedbackUpdate);
+            Sut.Update(feedbackToUpdate).GetAwaiter().GetResult();
+
+            // Assert
+            var initialFeedbackDataCopy2 = Sut.Get(initialFeedbackData.Data.Id).GetAwaiter().GetResult();
+             AssertArePropertyValuesEqual(initialFeedbackDataCopy2.Data, feedbackToUpdate.Data);
+        }
+
+        public void PopulateDatabase(int count)
+        {
             for (int i = 0; i < count; i++)
             {
-                data = GetRandom.FeedbackData();
-                AddTest();
+                var feedbackInput = new AddFeedbackRequest
+                {
+                    Description = Fixture.Create<string>(),
+                    DueDate = Fixture.Create<DateTime>()
+                };
+                var entityToBeAdded = FeedbackMapper.MapToDomainFromAddRequest(feedbackInput);
+                
+                Sut.Add(entityToBeAdded).GetAwaiter().GetResult();
             }
-
-            Assert.AreEqual(count + countBefore, obj.Get().GetAwaiter().GetResult().Count);
-        }
-        [TestMethod]
-        public void DeleteTest()
-        {
-            AddTest();
-            var count = obj.Get().GetAwaiter().GetResult().Count;
-            var expected = obj.Get(data.Id).GetAwaiter().GetResult();
-            TestArePropertyValuesEqual(expected.Data, data);
-
-            obj.Delete(data.Id).GetAwaiter();
-            var newCount = obj.Get().GetAwaiter().GetResult().Count;
-            expected = obj.Get(data.Id).GetAwaiter().GetResult();
-
-            Assert.IsNull(expected.Data);
-            Assert.AreNotEqual(count, newCount);
-        }
-        [TestMethod]
-        public void AddTest()
-        {
-            var expected = obj.Get(data.Id).GetAwaiter().GetResult();
-            Assert.IsNull(expected.Data);
-            expected = obj.Add(new Feedback(data)).GetAwaiter().GetResult();
-            TestArePropertyValuesEqual(expected.Data, data);
-
-        }
-        [TestMethod]
-        public void UpdateTest()
-        {
-            var newData = GetRandom.FeedbackData();
-            AddTest();
-            newData.Id = data.Id;
-            newData.DateAdded = newData.DateAdded.Date;
-            obj.Update(new Feedback(newData)).GetAwaiter();
-            var expected = obj.Get(data.Id).GetAwaiter().GetResult();
-            expected.Data.DateAdded = expected.Data.DateAdded.Date; 
-            TestArePropertyValuesEqual(expected.Data, newData);
-
         }
     }
 }

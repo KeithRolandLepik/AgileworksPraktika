@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Facade.Feedbacks
 {
-    public class FeedbackUpdate
+    public class UpdateFeedbackRequest
     {
         public string Description { get; set; }
         public DateTime DueDate { get; set; }
-        public Boolean Completed { get; set; }
+        public bool IsCompleted { get; set; }
     }
 }

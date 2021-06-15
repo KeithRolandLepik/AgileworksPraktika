@@ -1,6 +1,6 @@
 ﻿using Data.Common;
 using Domain.Common;
-using Microsoft.EntityFrameworkCore;
+using Marten;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,102 +11,64 @@ namespace Infra.Common
             ICrudMethods<TDomain> where TData : UniqueEntityData, new()
             where TDomain : Entity<TData>, new()
     {
-        protected internal DbContext db;
-        protected internal DbSet<TData> dbSet;
-
-        protected BaseRepository(DbContext c, DbSet<TData> s)
+        private readonly IDocumentStore _store;
+        
+        protected BaseRepository(IDocumentStore store)
         {
-            db = c;
-            dbSet = s;
+            _store = store;
         }
 
-        public virtual async Task<List<TDomain>> Get()
+        public async Task<List<TDomain>> Get()
         {
-            var query = dbSet.AsQueryable();
-            return toDomainObjectsList(await query.ToListAsync());
+            await using var session = _store.LightweightSession();
+
+            var list = await session.Query<TData>().ToListAsync();
+            return ToDomainObjectsList(list);
         }
 
         public async Task<TDomain> Get(int id)
         {
-            if (id is default(int)) return new TDomain();
+            await using var session = _store.LightweightSession();
 
-            var d = await getData(id);
-            if (d is null) return unspecifiedEntity();
-
-            var obj = toDomainObject(d);
-            return obj;
+            var entityData = session.Load<TData>(id);
+            
+            return ToDomainObject(entityData);
         }
-
 
         public async Task Delete(int id)
         {
+            await using var session = _store.LightweightSession();
 
-            if (id is default(int)) return;
-
-            var d = await getData(id);
-
-            if (d is null) return;
-        
-            try
-            {
-                dbSet.Remove(d);
-                await db.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException){} 
+            session.Delete<TData>(id);
+            await session.SaveChangesAsync();
         }
 
         public async Task<TDomain> Add(TDomain obj)
         {
-            if (obj?.Data is null) return new TDomain();
+            await using var session = _store.LightweightSession();
 
-            try
-            {
-                dbSet.Add(obj.Data);
-                await db.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-
-            }
+            session.Store(obj.Data);
             
-            var o = await Get(obj.Data.Id);
-            return o;
+            await session.SaveChangesAsync();
+
+            var entityData = await session.Query<TData>().FirstOrDefaultAsync(x => x.Id == obj.Data.Id);
+            
+            return ToDomainObject(entityData);
         }
 
         public async Task Update(TDomain obj)
         {
-            if(obj.Data is null)
-            {
-                return;
-            }
-            var d = getData(obj);
-            d = copyData(d);
+            await using var session = _store.LightweightSession();
 
-            db.Attach(d).State = EntityState.Modified;
+            session.Store(obj.Data);
 
-            try { await db.SaveChangesAsync(); }
-            catch (DbUpdateConcurrencyException)
-            {
-
-            }
-
+            await session.SaveChangesAsync();
         }
 
-        protected async Task<TData> getData(int id)
-        => await dbSet.FirstOrDefaultAsync(m => m.Id == id);
+        
+        internal List<TDomain> ToDomainObjectsList(IEnumerable<TData> set) => set.Select(ToDomainObject).ToList();
 
-        protected TData getDataById(TData d)
-            => dbSet.Find(d.Id);
-   
-        internal List<TDomain> toDomainObjectsList(List<TData> set) => set.Select(toDomainObject).ToList();
-
-        protected TData getData(TDomain obj) => obj.Data;
-
-        protected abstract TData copyData(TData d);
-
-        protected internal abstract TDomain toDomainObject(TData UniqueEntityData);
-
-        protected abstract TDomain unspecifiedEntity();
+        protected internal abstract TDomain ToDomainObject(TData entityData);
 
     }
 }
