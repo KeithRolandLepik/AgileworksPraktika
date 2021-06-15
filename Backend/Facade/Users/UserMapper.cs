@@ -6,7 +6,7 @@ namespace Facade.Users
     public static class UserMapper
     {
         public static User MapRequestToDomain(UserRequest userRequest) =>
-            new(new UserData()
+            new(new UserData
             {
                 Id = userRequest.Id, 
                 Username=  userRequest.Username,
