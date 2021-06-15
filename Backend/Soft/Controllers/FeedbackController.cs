@@ -4,9 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 using Domain.Feedbacks;
 using Facade.Feedbacks;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 
 namespace Soft.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class FeedbackController : ControllerBase
