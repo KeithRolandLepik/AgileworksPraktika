@@ -1,12 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using AutoFixture;
-using Data.Feedbacks;
-using Domain.Feedbacks;
-using Facade.Feedbacks;
+﻿using AutoFixture;
 using Facade.Users;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 

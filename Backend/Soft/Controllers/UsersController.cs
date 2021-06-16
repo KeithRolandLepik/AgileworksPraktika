@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
@@ -34,7 +33,7 @@ namespace Soft.Controllers
 
         [AllowAnonymous]
         [HttpPost("authenticate")]
-        public async Task<IActionResult> Authenticate([FromBody] UserRequest userRequest)
+        public async Task<ActionResult<UserModel>> Authenticate([FromBody] UserRequest userRequest)
         {
             var user = await _usersRepository.Authenticate(userRequest.Username, userRequest.Password);
 
@@ -55,43 +54,39 @@ namespace Soft.Controllers
             var token = tokenHandler.CreateToken(tokenDescriptor);
             var tokenString = tokenHandler.WriteToken(token);
             
-            return Ok(new
-            {
-                user.Data.Id,
-                user.Data.Username,
-                user.Data.FirstName,
-                user.Data.LastName,
-                Token = tokenString
-            });
+            return Ok(UserMapper.MapDomainToModel(user,tokenString));
         }
 
         [AllowAnonymous]
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody] UserRequest userRequest)
+        public async Task<ActionResult<UserModel>> Register([FromBody] UserRequest userRequest)
         { 
-            await _usersRepository.Create(UserMapper.MapRequestToDomain(userRequest), userRequest.Password); 
-            return Ok();
+            var result = await _usersRepository.Create(UserMapper.MapRequestToDomain(userRequest), userRequest.Password); 
+
+            return UserMapper.MapDomainToModel(result,string.Empty);
         }
 
         [HttpGet]
-        public async Task<ActionResult<List<User>>> GetAll()
+        public async Task<ActionResult<List<UserModel>>> GetAll()
         {
             var users = await _usersRepository.GetAll();
-            var usersList = users.ToList();
+            var usersList = users.Select(x => UserMapper.MapDomainToModel(x,string.Empty)).ToList();
             return usersList;
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<User>> GetById(int id)
+        public async Task<ActionResult<UserModel>> GetById(int id)
         {
             var user = await _usersRepository.GetById(id);
-            return Ok(user);
+            if (user == null) return BadRequest();
+
+            return Ok(UserMapper.MapDomainToModel(user,string.Empty));
         }
 
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, [FromBody] UserRequest userRequest)
         {
-            userRequest.Id = id; 
+            if(userRequest.Id != id) return BadRequest(); 
             await _usersRepository.Update(UserMapper.MapRequestToDomain(userRequest), userRequest.Password); 
             return Ok();
             
