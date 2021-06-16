@@ -2,8 +2,10 @@
 using Microsoft.Extensions.DependencyInjection;
 using Soft;
 using System;
+using Infra.Authentication;
 using Tests.Common;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Weasel.Postgresql;
 
@@ -14,7 +16,7 @@ namespace Tests.Infra.Common
         internal DatabaseFixture DatabaseFixture;
         internal IServiceProvider Services;
         internal IDocumentStore DocumentStore;
-
+        internal IOptions<AppSettings> AppSettings;
         public void InitializeTestDatabase()
         {
             DatabaseFixture = new DatabaseFixture(
@@ -32,6 +34,7 @@ namespace Tests.Infra.Common
                 })).Build().Services;
 
             DocumentStore = Services.GetRequiredService<IDocumentStore>();
+            AppSettings = Services.GetRequiredService<IOptions<AppSettings>>();
         }
         [TestCleanup]
         public void Cleanup()

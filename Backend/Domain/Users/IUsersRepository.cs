@@ -1,14 +1,15 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 
 namespace Domain.Users
 {
     public interface IUsersRepository
     {
-        User Authenticate(string username, string password);
-        IEnumerable<User> GetAll();
-        User GetById(int id);
-        User Create(User user, string password);
-        void Update(User user, string password = null);
-        void Delete(int id);
+        Task<User> Authenticate(string username, string password);
+        Task<List<User>> GetAll();
+        Task<User> GetById(int id);
+        Task<User> Create(User user, string password);
+        Task Update(User user, string password = null);
+        Task Delete(int id);
     }
 }

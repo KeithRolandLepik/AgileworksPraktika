@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
+using System.Threading.Tasks;
 using Data.Feedbacks;
 using Domain.Users;
 using Marten;
+using Marten.Linq;
 
 namespace Infra.Authentication
 {
@@ -16,9 +19,9 @@ namespace Infra.Authentication
             _store = store;
         }
 
-        public User Authenticate(string username, string password)
+        public async Task<User> Authenticate(string username, string password)
         {
-            using var session = _store.LightweightSession();
+            await using var session = _store.LightweightSession();
 
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
                 return null;
@@ -31,21 +34,24 @@ namespace Infra.Authentication
             return !VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt) ? null : new User(user);
         }
 
-        public IEnumerable<User> GetAll()
+        public async Task<List<User>> GetAll()
         {
-            using var session = _store.LightweightSession();
-            return ToDomainObjectsList(session.Query<UserData>());
+            await using var session = _store.LightweightSession();
+            return ToDomainObjectsList(await session.Query<UserData>().ToListAsync());
         }
 
-        public User GetById(int id)
+        public async Task<User> GetById(int id)
         {
-            using var session = _store.LightweightSession();
-            return ToDomainObject(session.Query<UserData>().First(x => x.Id == id));
+            await using var session = _store.LightweightSession();
+
+            var query = session.Query<UserData>();
+            var user = query.FirstOrDefault(x => x.Id == id);
+            return user == null ? null : ToDomainObject(user);
         }
 
-        public User Create(User userRequest, string password)
+        public async Task<User> Create(User userRequest, string password)
         {
-            using var session = _store.LightweightSession();
+            await using var session = _store.LightweightSession();
             
             if (string.IsNullOrWhiteSpace(password))
                 return new User();
@@ -65,14 +71,14 @@ namespace Infra.Authentication
             };
 
             session.Store(userData);
-            session.SaveChanges();
+            await session.SaveChangesAsync();
 
             return ToDomainObject(userData);
         }
 
-        public void Update(User userReq, string password = null)
+        public async Task Update(User userReq, string password = null)
         {
-            using var session = _store.LightweightSession();
+            await using var session = _store.LightweightSession();
             var user = session.Query<UserData>().First(x => x.Id == userReq.Data.Id);
 
             if (user == null)
@@ -101,19 +107,19 @@ namespace Infra.Authentication
             }
 
             session.Update(user);
-            session.SaveChanges();
+            await session.SaveChangesAsync();
         }
 
-        public void Delete(int id)
+        public async Task Delete(int id)
         {
-            using var session = _store.LightweightSession();
+            await using var session = _store.LightweightSession();
             
             var user = session.Query<UserData>().First(x => x.Id == id);
 
             if (user == null) return;
             
             session.Delete(user);
-            session.SaveChanges();
+            await session.SaveChangesAsync();
         }
 
         private static void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)

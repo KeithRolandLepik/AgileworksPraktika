@@ -1,7 +1,11 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using System.Threading.Tasks;
 using Domain.Users;
 using Facade.Users;
 using Infra.Authentication;
@@ -30,9 +34,9 @@ namespace Soft.Controllers
 
         [AllowAnonymous]
         [HttpPost("authenticate")]
-        public IActionResult Authenticate([FromBody] UserRequest userRequest)
+        public async Task<IActionResult> Authenticate([FromBody] UserRequest userRequest)
         {
-            var user = _usersRepository.Authenticate(userRequest.Username, userRequest.Password);
+            var user = await _usersRepository.Authenticate(userRequest.Username, userRequest.Password);
 
             if (user == null)
                 return BadRequest(new { message = "Username or password is incorrect" });
@@ -63,39 +67,43 @@ namespace Soft.Controllers
 
         [AllowAnonymous]
         [HttpPost("register")]
-        public IActionResult Register([FromBody] UserRequest userRequest)
+        public async Task<IActionResult> Register([FromBody] UserRequest userRequest)
         { 
-            _usersRepository.Create(UserMapper.MapRequestToDomain(userRequest), userRequest.Password); 
+            await _usersRepository.Create(UserMapper.MapRequestToDomain(userRequest), userRequest.Password); 
             return Ok();
         }
 
         [HttpGet]
-        public IActionResult GetAll()
+        public async Task<ActionResult<List<User>>> GetAll()
         {
-            var users = _usersRepository.GetAll();
-            return Ok(users);
+            var users = await _usersRepository.GetAll();
+            var usersList = users.ToList();
+            return usersList;
         }
 
         [HttpGet("{id}")]
-        public IActionResult GetById(int id)
+        public async Task<ActionResult<User>> GetById(int id)
         {
-            var user = _usersRepository.GetById(id);
+            var user = await _usersRepository.GetById(id);
             return Ok(user);
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(int id, [FromBody] UserRequest userRequest)
+        public async Task<IActionResult> Update(int id, [FromBody] UserRequest userRequest)
         {
             userRequest.Id = id; 
-            _usersRepository.Update(UserMapper.MapRequestToDomain(userRequest), userRequest.Password); 
+            await _usersRepository.Update(UserMapper.MapRequestToDomain(userRequest), userRequest.Password); 
             return Ok();
             
         }
 
         [HttpDelete("{id}")]
-        public IActionResult Delete(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            _usersRepository.Delete(id);
+            var user = await _usersRepository.GetById(id);
+            if (user == null) return BadRequest();
+         
+            await _usersRepository.Delete(id);
             return Ok();
         }
     }

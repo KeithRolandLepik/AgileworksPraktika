@@ -40,7 +40,7 @@ namespace Tests.Infra.Authentication
                 Password = _mockPassword,
                 Username = _userData.Username
             };
-            _userData = Repository.Create(UserMapper.MapRequestToDomain(userRequest), userRequest.Password).Data;
+            _userData = Repository.Create(UserMapper.MapRequestToDomain(userRequest), userRequest.Password).GetAwaiter().GetResult().Data;
         }
 
         [TestMethod]
@@ -49,9 +49,9 @@ namespace Tests.Infra.Authentication
             var password = Fixture.Create<string>();
 
             // Act
-            var response = Repository.Authenticate(_userData.Username, password);
-            var response2 = Repository.Authenticate(Fixture.Create<string>(),_userData.Username);
-            var response3 = Repository.Authenticate(_userData.Username, _mockPassword);
+            var response = Repository.Authenticate(_userData.Username, password).GetAwaiter().GetResult();
+            var response2 = Repository.Authenticate(Fixture.Create<string>(),_userData.Username).GetAwaiter().GetResult();
+            var response3 = Repository.Authenticate(_userData.Username, _mockPassword).GetAwaiter().GetResult();
 
             // Assert
             Assert.IsNull(response);
@@ -63,7 +63,7 @@ namespace Tests.Infra.Authentication
         public void GetAll_should_get_a_list_of_all_elements_in_database()
         {
             // Act
-            var response = Repository.GetAll().ToList();
+            var response = Repository.GetAll().GetAwaiter().GetResult().ToList();
 
             // Assert
             Assert.IsTrue(response.Any());
@@ -73,7 +73,7 @@ namespace Tests.Infra.Authentication
         public void GetById_should_return_user_by_id()
         {
             // Act
-            var userData = Repository.GetById(_userData.Id);
+            var userData = Repository.GetById(_userData.Id).GetAwaiter().GetResult();
             
             // Assert
             Assert.AreEqual(userData.Data.Username,_userData.Username);
@@ -84,13 +84,13 @@ namespace Tests.Infra.Authentication
         [TestMethod]
         public void Create_should_add_an_object_to_database()
         {
-            var countBefore = Repository.GetAll().Count();
+            var countBefore = Repository.GetAll().GetAwaiter().GetResult().Count();
             
             // Act
-            Repository.Create(UserMapper.MapRequestToDomain(Fixture.Create<UserRequest>()), _mockPassword);
+            Repository.Create(UserMapper.MapRequestToDomain(Fixture.Create<UserRequest>()), _mockPassword).GetAwaiter().GetResult();
 
             // Assert
-            var countAfter = Repository.GetAll().Count();
+            var countAfter = Repository.GetAll().GetAwaiter().GetResult().Count();
             Assert.AreEqual(countBefore,countAfter-1);
         }
 
@@ -100,13 +100,13 @@ namespace Tests.Infra.Authentication
             var newFeedbackUpdate = Fixture.Create<UserRequest>();
 
             // Act
-            var initialUserData = Repository.GetById(_userData.Id);
+            var initialUserData = Repository.GetById(_userData.Id).GetAwaiter().GetResult();
             var userToUpdate = UserMapper.MapRequestToDomain(newFeedbackUpdate);
             userToUpdate.Data.Id = _userData.Id;
-            Repository.Update(userToUpdate,_mockPassword);
+            Repository.Update(userToUpdate,_mockPassword).GetAwaiter().GetResult();
 
             // Assert
-            var initialUserDataCopy = Repository.GetById(_userData.Id);
+            var initialUserDataCopy = Repository.GetById(_userData.Id).GetAwaiter().GetResult();
             Assert.AreEqual(initialUserDataCopy.Data.Username, userToUpdate.Data.Username);
             Assert.AreEqual(initialUserDataCopy.Data.FirstName, userToUpdate.Data.FirstName);
             Assert.AreEqual(initialUserDataCopy.Data.LastName, userToUpdate.Data.LastName);
@@ -116,11 +116,11 @@ namespace Tests.Infra.Authentication
         [TestMethod]
         public void Delete_should_remove_a_user_from_database()
         {
-            var countBefore = Repository.GetAll().Count();
+            var countBefore = Repository.GetAll().GetAwaiter().GetResult().Count();
 
             // Act
-            Repository.Delete(_userData.Id);
-            var countAfter = Repository.GetAll().Count();
+            Repository.Delete(_userData.Id).GetAwaiter().GetResult();
+            var countAfter = Repository.GetAll().GetAwaiter().GetResult().Count();
 
             // Assert
             Assert.AreEqual(countBefore-countAfter, 1);
