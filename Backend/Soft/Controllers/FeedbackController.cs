@@ -11,7 +11,7 @@ namespace Soft.Controllers
     [Authorize]
     [Route("api/[controller]")]
     [ApiController]
-    public class FeedbackController : ControllerBase
+    public class FeedbackController : BaseController
     {
         private readonly IFeedbackRepository _repository;
         public FeedbackController(IFeedbackRepository repository)

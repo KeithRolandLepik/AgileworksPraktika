@@ -18,7 +18,7 @@ namespace Soft.Controllers
     [Authorize]
     [ApiController]
     [Route("[controller]")]
-    public class UsersController : ControllerBase
+    public class UsersController : BaseController
     {
         private readonly IUsersRepository _usersRepository;
         private readonly AppSettings _appSettings;
@@ -46,7 +46,7 @@ namespace Soft.Controllers
             {
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim(ClaimTypes.Name, user.Data.Id.ToString())
+                    new(ClaimTypes.Name, user.Data.Id.ToString())
                 }),
                 Expires = DateTime.UtcNow.AddDays(7),
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
@@ -59,10 +59,9 @@ namespace Soft.Controllers
 
         [AllowAnonymous]
         [HttpPost("register")]
-        public async Task<ActionResult<UserModel>> Register([FromBody] UserRequest userRequest)
+        public async Task<ActionResult<UserModel>> Register(UserRequest userRequest)
         { 
-            var result = await _usersRepository.Create(UserMapper.MapRequestToDomain(userRequest), userRequest.Password); 
-
+            var result = await _usersRepository.Create(UserMapper.MapRequestToDomain(userRequest), userRequest.Password);
             return UserMapper.MapDomainToModel(result,string.Empty);
         }
 
@@ -78,13 +77,13 @@ namespace Soft.Controllers
         public async Task<ActionResult<UserModel>> GetById(int id)
         {
             var user = await _usersRepository.GetById(id);
-            if (user == null) return BadRequest();
+            if (user == null) return NotFound();
 
             return Ok(UserMapper.MapDomainToModel(user,string.Empty));
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] UserRequest userRequest)
+        public async Task<IActionResult> Update(int id, UserRequest userRequest)
         {
             if(userRequest.Id != id) return BadRequest(); 
             await _usersRepository.Update(UserMapper.MapRequestToDomain(userRequest), userRequest.Password); 
@@ -96,7 +95,8 @@ namespace Soft.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var user = await _usersRepository.GetById(id);
-            if (user == null) return BadRequest();
+
+            if (user == null) return NotFound();
          
             await _usersRepository.Delete(id);
             return Ok();

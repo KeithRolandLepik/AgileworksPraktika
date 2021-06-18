@@ -74,7 +74,7 @@ namespace Tests.Soft.Controllers
             var finalCount = Controller.GetAll().GetAwaiter().GetResult().Value.Count;
 
             // Assert
-            Assert.AreEqual(result1.GetType(), typeof(BadRequestResult));
+            Assert.AreEqual(result1.GetType(), typeof(NotFoundResult));
             Assert.AreEqual(countBefore,countAfter);
 
             Assert.AreEqual(result2.GetType(),typeof(OkResult));
@@ -102,7 +102,7 @@ namespace Tests.Soft.Controllers
             var value = ((UserModel) ((OkObjectResult) response2.Result).Value);
 
             // Assert
-            Assert.AreEqual(((BadRequestResult)response1.Result).GetType(), typeof(BadRequestResult));
+            Assert.AreEqual(((NotFoundResult)response1.Result).GetType(), typeof(NotFoundResult));
             Assert.AreEqual(((OkObjectResult)response2.Result).GetType(),typeof(OkObjectResult));
 
             Assert.AreEqual(value.Id, _userData.Id);

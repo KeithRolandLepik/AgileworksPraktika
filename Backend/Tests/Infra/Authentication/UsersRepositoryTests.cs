@@ -22,10 +22,10 @@ namespace Tests.Infra.Authentication
             Fixture = new Fixture();
             _userData = Fixture.Create<UserData>();
             _mockPassword = Fixture.Create<string>();
-            AddUser(_userData, _mockPassword);
+            AddUser(_userData);
         }
 
-        private void AddUser(UserData user, string password)
+        private void AddUser(UserData user)
         {
             var userRequest = new UserRequest
             {
@@ -111,11 +111,11 @@ namespace Tests.Infra.Authentication
         [TestMethod]
         public void Delete_should_remove_a_user_from_database()
         {
-            var countBefore = Repository.GetAll().GetAwaiter().GetResult().Count();
+            var countBefore = Repository.GetAll().GetAwaiter().GetResult().Count;
 
             // Act
             Repository.Delete(_userData.Id).GetAwaiter().GetResult();
-            var countAfter = Repository.GetAll().GetAwaiter().GetResult().Count();
+            var countAfter = Repository.GetAll().GetAwaiter().GetResult().Count;
 
             // Assert
             Assert.AreEqual(countBefore-countAfter, 1);

@@ -12,6 +12,8 @@ namespace Infra.Authentication
     {
         private readonly IDocumentStore _store;
         
+        // TODO UsersRepository peaks refaktoreerima nii, et see kasutaks ka baserepository meetodeid
+
         public UsersRepository(IDocumentStore store)
         {
             _store = store;
@@ -52,10 +54,10 @@ namespace Infra.Authentication
             await using var session = _store.LightweightSession();
             
             if (string.IsNullOrWhiteSpace(password))
-                return new User();
+                return null;
 
             if (session.Query<UserData>().Any(x => x.Username == userRequest.Data.Username))
-                return new User();
+                return null;
 
             CreatePasswordHash(password, out var passwordHash, out var passwordSalt);
 

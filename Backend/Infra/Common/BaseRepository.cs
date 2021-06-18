@@ -11,7 +11,7 @@ namespace Infra.Common
             ICrudMethods<TDomain> where TData : UniqueEntityData, new()
             where TDomain : Entity<TData>, new()
     {
-        private readonly IDocumentStore _store;
+        internal readonly IDocumentStore _store;
         
         protected BaseRepository(IDocumentStore store)
         {
