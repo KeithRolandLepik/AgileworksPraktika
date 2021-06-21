@@ -1,4 +1,5 @@
 <template>
+<NavBar/>
   <div class="page">
     <div class="header">
       <span class="headerText">Add a Feedback</span>
@@ -12,10 +13,12 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 import AddFeedback from '../components/FeedbackList/AddFeedback.vue';
+import NavBar from '@/components/NavBar/NavBar.vue';
 export default defineComponent({
   components: {
     AddFeedback,
-  },
+    NavBar,
+},
   setup() {
     return {};
   },

@@ -112,10 +112,10 @@ namespace Soft
                 app.UseCors("MyPolicy");
             }
 
+            app.UseAuthentication();
             app.UseHttpsRedirection();
 
             app.UseRouting();
-            app.UseAuthentication();
             app.UseAuthorization();
 
 

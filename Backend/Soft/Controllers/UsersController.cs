@@ -17,7 +17,7 @@ namespace Soft.Controllers
 {
     [Authorize]
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class UsersController : BaseController
     {
         private readonly IUsersRepository _usersRepository;
@@ -38,7 +38,7 @@ namespace Soft.Controllers
             var user = await _usersRepository.Authenticate(userRequest.Username, userRequest.Password);
 
             if (user == null)
-                return BadRequest(new { message = "Username or password is incorrect" });
+                return BadRequest();
 
             var tokenHandler = new JwtSecurityTokenHandler();
             var key = Encoding.ASCII.GetBytes(_appSettings.Secret);

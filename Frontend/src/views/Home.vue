@@ -1,5 +1,6 @@
 <template>
-  <div class="page">
+  <NavBar/>
+  <div class="page">    
     <div class="header">
       <span class="headerText">Feedback</span>
     </div>
@@ -8,15 +9,15 @@
         <FeedbackList />
       </Suspense>
     </div>
-  </div>
+  </div> 
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import FeedbackList from '../components/FeedbackList/FeedbackList.vue';
+import FeedbackList from '../components/FeedbackList/FeedbackList.vue';import NavBar from '@/components/NavBar/NavBar.vue';
 export default defineComponent({
   components: {
-    FeedbackList,
+    FeedbackList,NavBar
   },
   setup() {
     return {};
