@@ -20,7 +20,6 @@ namespace Tests.Soft.Controllers
         public void TestInitialize()
         {
             InitializeTestDatabase();
-
             Repository = new FeedbackRepository(DocumentStore);
             Controller = new FeedbackController(Repository);
             Fixture = new Fixture();
@@ -64,11 +63,11 @@ namespace Tests.Soft.Controllers
                 IsCompleted = true,
                 Description = "newTest1234141411",
                 DueDate = Fixture.Create<DateTime>()
-        };
+            };
             var updateData2 = new UpdateFeedbackRequest
             {
                 DueDate = Fixture.Create<DateTime>()
-    };
+            };
             var updateData3 = new UpdateFeedbackRequest
             {
                 Description = "newTest25151234351431234"
@@ -99,10 +98,18 @@ namespace Tests.Soft.Controllers
         [TestMethod]
         public void PostFeedback_should_return_createdAtActionResult_if_successful_or_badRequestResult_if_unSuccesful()
         {
-            var inputData1 = new AddFeedbackRequest { Description = Fixture.Create<string>(), DueDate = Fixture.Create<DateTime>()
+            var inputData1 = new AddFeedbackRequest { 
+                Description = Fixture.Create<string>(),
+                DueDate = Fixture.Create<DateTime>()
             };
-            var inputData2 = new AddFeedbackRequest { Description = Fixture.Create<string>() };
-            var inputData3 = new AddFeedbackRequest { DueDate = Fixture.Create<DateTime>() };
+            var inputData2 = new AddFeedbackRequest
+            {
+                Description = Fixture.Create<string>()
+            };
+            var inputData3 = new AddFeedbackRequest
+            {
+                DueDate = Fixture.Create<DateTime>()
+            };
 
             // Act
             var result1 = Controller.PostFeedback(inputData1).GetAwaiter().GetResult();
@@ -135,7 +142,7 @@ namespace Tests.Soft.Controllers
 
         public void AddFeedbacks()
         {
-            for (int i = 0; i < Count; i++)
+            for (var i = 0; i < Count; i++)
             {
                 var inputData = new AddFeedbackRequest { Description = Fixture.Create<string>(), DueDate = Fixture.Create<DateTime>() };
                 var l = Repository.Add(FeedbackMapper.MapToDomainFromAddRequest(inputData)).GetAwaiter().GetResult();

@@ -9,6 +9,6 @@ namespace Infra.Feedbacks
     {
         public FeedbackRepository(IDocumentStore session): base(session) { }
 
-        protected internal override Feedback ToDomainObject(FeedbackData entityData) => new Feedback(entityData);
+        protected internal override Feedback ToDomainObject(FeedbackData entityData) => new(entityData);
     }
 }

@@ -6,7 +6,8 @@ namespace Tests.Common
     public class DatabaseFixture : IDisposable
     {
         public string ConnectionString { get; private set; }
-        internal NpgsqlConnectionStringBuilder ConnectionStringBuilder => new NpgsqlConnectionStringBuilder(ConnectionString);
+        internal NpgsqlConnectionStringBuilder ConnectionStringBuilder => 
+            new(ConnectionString);
         public NpgsqlConnection NpgsqlConnection { get; }
         public DatabaseFixture(string initialConnectionString)
         {
@@ -39,6 +40,7 @@ namespace Tests.Common
                 createDatabaseCommand.ExecuteNonQuery();
             }
         }
+
         public void Dispose()
         {
             NpgsqlConnection?.Dispose();
@@ -47,24 +49,23 @@ namespace Tests.Common
 
         internal void DropDatabase()
         {
-            using (var connection = new NpgsqlConnection(ConnectionString))
-            {
-                connection.Open();
-                connection.ChangeDatabase("postgres"); // Change database, so we can drop the current one.
+            using var connection = new NpgsqlConnection(ConnectionString);
+            connection.Open();
+            connection.ChangeDatabase("postgres"); // Change database, so we can drop the current one.
 #pragma warning disable CA2100
-                var closeAllConnectionsCommand =
-                    new NpgsqlCommand(
-                        $"SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '{ConnectionStringBuilder.Database}';",
-                        connection);
+            var closeAllConnectionsCommand =
+                new NpgsqlCommand(
+                    $"SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = " +
+                    $"'{ConnectionStringBuilder.Database}';",
+                    connection);
 #pragma warning restore CA2100 // Review SQL queries for security vulnerabilities
-                closeAllConnectionsCommand.ExecuteNonQuery();
+            closeAllConnectionsCommand.ExecuteNonQuery();
 #pragma warning disable CA2100
-                var dropDatabaseCommand =
-                    new NpgsqlCommand(
-                        $@"DROP DATABASE IF EXISTS ""{ConnectionStringBuilder.Database}""", connection);
+            var dropDatabaseCommand =
+                new NpgsqlCommand(
+                    $@"DROP DATABASE IF EXISTS ""{ConnectionStringBuilder.Database}""", connection);
 #pragma warning restore CA2100
-                dropDatabaseCommand.ExecuteNonQuery();
-            }
+            dropDatabaseCommand.ExecuteNonQuery();
         }
     }
 }
@@ -73,7 +74,8 @@ public static class TestConnectionStringSource
     public static string GenerateConnectionString()
     {
         var builder =
-            new NpgsqlConnectionStringBuilder(connectionString: $"server=localhost;Port=5432;userid=postgres;password=parool")
+            new NpgsqlConnectionStringBuilder
+                (connectionString: $"server=localhost;Port=5432;userid=postgres;password=parool")
             {
                 Database = "tests-db-" + Guid.NewGuid().ToString().ToLower()
             };
