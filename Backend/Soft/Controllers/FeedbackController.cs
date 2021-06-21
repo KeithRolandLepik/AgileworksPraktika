@@ -22,6 +22,7 @@ namespace Soft.Controllers
         [HttpGet]
         public async Task<ActionResult<List<FeedbackModel>>> GetFeedbacks()
         {
+            
             var feedbackList = await _repository.Get();
 
             var feedbackModelList = feedbackList.Select(FeedbackMapper.MapToModel).ToList();

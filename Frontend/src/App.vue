@@ -1,13 +1,32 @@
 <template>
-  <router-view />
+  <router-view :key="routeKey" />
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
+import { defineComponent, watch, ref } from 'vue';
+import useUsers from "./api/useUsers";
 
 export default defineComponent({
   name: 'App',
   components: {},
+  setup(){
+    const{user} = useUsers();
+    const routeKey = ref(0);
+    watch([user], () => {
+      if(user.value){
+        routeKey.value = user.value.Id;
+        localStorage.setItem('user', JSON.stringify(user.value))
+        }
+      });   
+      if(user.value == undefined){
+          if(localStorage.getItem('user')){
+            user.value = JSON.parse(localStorage.getItem('user'));
+          }
+      }
+
+      return{routeKey}
+    }
+  
 });
 </script>
 
