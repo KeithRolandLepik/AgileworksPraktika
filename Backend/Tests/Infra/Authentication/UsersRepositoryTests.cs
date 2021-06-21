@@ -14,6 +14,7 @@ namespace Tests.Infra.Authentication
         protected UsersRepository Repository;
         private UserData _userData;
         private string _mockPassword;
+
         [TestInitialize]
         public void TestInitialize()
         {
@@ -95,7 +96,6 @@ namespace Tests.Infra.Authentication
             var newFeedbackUpdate = Fixture.Create<UserRequest>();
 
             // Act
-            var initialUserData = Repository.GetById(_userData.Id).GetAwaiter().GetResult();
             var userToUpdate = UserMapper.MapRequestToDomain(newFeedbackUpdate);
             userToUpdate.Data.Id = _userData.Id;
             Repository.Update(userToUpdate,_mockPassword).GetAwaiter().GetResult();
