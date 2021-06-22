@@ -1,6 +1,6 @@
 ﻿using Data.Common;
 
-namespace Data.Feedbacks
+namespace Data.Users
 {
     public class UserData : UniqueEntityData
     {

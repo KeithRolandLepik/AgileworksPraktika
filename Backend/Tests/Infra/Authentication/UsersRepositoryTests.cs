@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using AutoFixture;
 using Data.Feedbacks;
+using Data.Users;
 using Facade.Users;
 using Infra.Authentication;
 using Microsoft.VisualStudio.TestTools.UnitTesting;

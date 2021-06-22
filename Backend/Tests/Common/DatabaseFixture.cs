@@ -1,5 +1,5 @@
-﻿using Npgsql;
-using System;
+﻿using System;
+using Npgsql;
 
 namespace Tests.Common
 {
@@ -68,17 +68,18 @@ namespace Tests.Common
             dropDatabaseCommand.ExecuteNonQuery();
         }
     }
-}
-public static class TestConnectionStringSource
-{
-    public static string GenerateConnectionString()
+
+    public static class TestConnectionStringSource
     {
-        var builder =
-            new NpgsqlConnectionStringBuilder
-                (connectionString: $"server=localhost;Port=5432;userid=postgres;password=parool")
-            {
-                Database = "tests-db-" + Guid.NewGuid().ToString().ToLower()
-            };
-        return builder.ConnectionString;
+        public static string GenerateConnectionString()
+        {
+            var builder =
+                new NpgsqlConnectionStringBuilder
+                    (connectionString: $"server=localhost;Port=5432;userid=postgres;password=parool")
+                    {
+                        Database = "tests-db-" + Guid.NewGuid().ToString().ToLower()
+                    };
+            return builder.ConnectionString;
+        }
     }
 }

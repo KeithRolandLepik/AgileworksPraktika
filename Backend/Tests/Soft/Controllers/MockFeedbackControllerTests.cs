@@ -1,19 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Reflection.Metadata;
-using System.Text;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
 using AutoFixture;
-using Baseline.Reflection;
-using Data.Feedbacks;
 using Domain.Feedbacks;
 using Facade.Feedbacks;
-using Infra.Feedbacks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using NuGet.Frameworks;
 using Soft.Controllers;
 using FeedbackData = Data.Feedbacks.FeedbackData;
 
@@ -152,7 +144,6 @@ namespace Tests.Soft.Controllers
         [TestMethod]
         public void DeleteFeedback_should_return_noContentResult_if_entity_is_in_database()
         {
-
             var mockRepository = new Mock<IFeedbackRepository> {DefaultValue = DefaultValue.Mock};
             var id = Fixture.Create<int>();
             mockRepository.Setup(x =>
@@ -163,9 +154,9 @@ namespace Tests.Soft.Controllers
 
             // Act
             var result1 = Controller.DeleteFeedback(id).GetAwaiter().GetResult();
-            mockRepository.Verify(x => x.Delete(id), Times.Once);
 
             // Assert
+            mockRepository.Verify(x => x.Delete(id), Times.Once);
             Assert.AreEqual(result1.GetType(), typeof(NoContentResult));
         }
 
@@ -221,6 +212,7 @@ namespace Tests.Soft.Controllers
                 x.Add(It.IsAny<Feedback>())).ReturnsAsync(new Feedback(Fixture.Create<FeedbackData>()));
 
             Controller = new FeedbackController(mockRepository.Object);
+
             // Act
             var result = Controller.PostFeedback(Fixture.Create<AddFeedbackRequest>()).GetAwaiter().GetResult().Result;
             mockRepository.Verify(x => x.Add(It.IsAny<Feedback>()),Times.Once);

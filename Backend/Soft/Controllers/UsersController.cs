@@ -35,26 +35,12 @@ namespace Soft.Controllers
         [HttpPost("authenticate")]
         public async Task<ActionResult<UserModel>> Authenticate([FromBody] UserRequest userRequest)
         {
-            var user = await _usersRepository.Authenticate(userRequest.Username, userRequest.Password);
+            var result = await _usersRepository.Authenticate(userRequest.Username, userRequest.Password);
 
-            if (user == null)
+            if (result.User == null)
                 return BadRequest();
 
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                    new(ClaimTypes.Name, user.Data.Id.ToString())
-                }),
-                Expires = DateTime.UtcNow.AddDays(7),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            var tokenString = tokenHandler.WriteToken(token);
-            
-            return Ok(UserMapper.MapDomainToModel(user,tokenString));
+            return Ok(UserMapper.MapDomainToModel(result.User, TokenGenerator(result.User)));
         }
 
         [AllowAnonymous]
@@ -62,7 +48,7 @@ namespace Soft.Controllers
         public async Task<ActionResult<UserModel>> Register(UserRequest userRequest)
         { 
             var result = await _usersRepository.Create(UserMapper.MapRequestToDomain(userRequest), userRequest.Password);
-            return UserMapper.MapDomainToModel(result,string.Empty);
+            return Ok(UserMapper.MapDomainToModel(result, TokenGenerator(result)));
         }
 
         [HttpGet]
@@ -100,6 +86,25 @@ namespace Soft.Controllers
          
             await _usersRepository.Delete(id);
             return Ok();
+        }
+
+        private string TokenGenerator(User user)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                    new(ClaimTypes.Name, user.Data.Id.ToString())
+                }),
+                Expires = DateTime.UtcNow.AddDays(7),
+                SigningCredentials = new SigningCredentials
+                    (new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var tokenString = tokenHandler.WriteToken(token);
+            return tokenString;
         }
     }
 }
