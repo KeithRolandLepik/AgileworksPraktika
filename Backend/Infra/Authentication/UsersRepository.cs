@@ -47,15 +47,14 @@ namespace Infra.Authentication
             var user = query.FirstOrDefault(x => x.Id == id);
             return user == null ? null : ToDomainObject(user);
         }
+
         public async Task<User?> Create(User userRequest, string password)
         {
             await using var session = _store.LightweightSession();
             
-            if (string.IsNullOrWhiteSpace(password))
-                return null;
+            var validatorResult= UsersRepositoryValidator.CanCreateUser(userRequest, session);
 
-            if (session.Query<UserData>().Any(x => x.Username == userRequest.Data.Username))
-                return null;
+            if (validatorResult.Item1) return null;
 
             CreatePasswordHash(password, out var passwordHash, out var passwordSalt);
 

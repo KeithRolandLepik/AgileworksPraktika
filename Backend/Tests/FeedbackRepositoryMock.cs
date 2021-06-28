@@ -12,7 +12,6 @@ namespace Tests
         internal Fixture Fixture;
         internal List<Feedback> FeedbacksList;
         internal Feedback UserFeedback;
-        internal int ExistingId;
         internal int AddCount;
         internal int DeleteCount;
         internal int UpdateCount;
@@ -30,21 +29,12 @@ namespace Tests
         {
             FeedbacksList = list;
         }
-        public int GetExistingIdOrAddRandomFeedbackAndGetId()
-        {
-            if(FeedbacksList.Count>0) return ExistingId = FeedbacksList[0].Data.Id;
 
-            FeedbacksList.Add(new Feedback(Fixture.Create<FeedbackData>()));
-            ExistingId = FeedbacksList[^1].Data.Id;
-
-            return ExistingId;
-        }
-
-        public bool VerifyAdd() => AddCount > 0;
+        public bool VerifyAddUsedAtleastOnce() => AddCount > 0;
         
-        public bool VerifyUpdate() => UpdateCount > 0;
+        public bool VerifyUpdateUsedAtleastOnce() => UpdateCount > 0;
 
-        public bool VerifyDelete() => DeleteCount > 0;
+        public bool VerifyDeleteUsedAtleastOnce() => DeleteCount > 0;
 
         public void SetupUserFeedback(Feedback feedback)
         {

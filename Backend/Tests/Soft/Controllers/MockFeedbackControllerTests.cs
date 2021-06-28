@@ -94,17 +94,19 @@ namespace Tests.Soft.Controllers
 
             FeedbackMock.SetupUserFeedback(entity);
             var request = Fixture.Create<UpdateFeedbackRequest>();
+
             //MockRepository.Setup(x =>
             //    x.Update(entity)).Returns(Task.CompletedTask);
             //MockRepository.Setup(x =>
             //    x.Get(data.Id)).ReturnsAsync(entity);
+
             Controller = new FeedbackController(FeedbackMock);
 
             // Act
             var result1 = Controller.PutFeedback(data.Id,request).GetAwaiter().GetResult();
             
             // Assert
-            Assert.IsTrue(FeedbackMock.VerifyUpdate());
+            Assert.IsTrue(FeedbackMock.VerifyUpdateUsedAtleastOnce());
             Assert.AreEqual(result1.GetType(), typeof(OkResult));
         }
 
@@ -163,7 +165,7 @@ namespace Tests.Soft.Controllers
             var result1 = Controller.DeleteFeedback(id).GetAwaiter().GetResult();
 
             // Assert
-            Assert.IsTrue(FeedbackMock.VerifyDelete());
+            Assert.IsTrue(FeedbackMock.VerifyDeleteUsedAtleastOnce());
             Assert.AreEqual(result1.GetType(), typeof(NoContentResult));
         }
 

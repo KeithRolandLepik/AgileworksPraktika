@@ -2,15 +2,28 @@
     <div class="page">
       <div class="container">
         <div class="header">Login</div>
-        
-        <div class="inputContainer">
-          <span class="label">Username</span>
-          <input type="text" class="input" v-model="userRequest.UserName">
-          
-          <span class="label">Password</span>  
-          <input type="password" class="input" v-model="userRequest.Password">
-        </div>
-        
+    
+          <form class="inputContainer">
+            <span class="label">Username</span>
+            <input v-model="userRequest.userName" type="text" class="input">
+            
+            <span class="label">Password</span>  
+            <input v-model="userRequest.password" type="password" class="input">
+            
+            <span class="label">
+              Gender
+            </span>
+
+            <span v-if='!userRequest.isOtherGender' class="label">Male</span>  
+            <input v-if='!userRequest.isOtherGender'  v-model="userRequest.gender" id="male" type="radio" name="gender" value="male" />
+            <span v-if='!userRequest.isOtherGender'  class="label">Female</span>  
+            <input v-if='!userRequest.isOtherGender'  id="female" v-model="userRequest.gender" type="radio" name="gender" value="female"/>      
+            <span class="label">Other</span>        
+            <input v-model="userRequest.isOtherGender" type="checkbox" name="gender" value='true'/>
+            
+            <input v-if="userRequest.isOtherGender" v-model="userRequest.gender" type="text" class="input">
+          </form>
+
         <div class="action">
           <div class="buttonGroup">
             <button class="button" @click="loginUser()">Login</button>
@@ -34,7 +47,7 @@
       const userRequest: Ref<UserRequest> = ref({});
       var { registerUser,authenticateUser} = useUsers();
       const route = useRouter();
-
+      var result; 
 
       var loginUser = async () => {
         await authenticateUser(userRequest.value);
@@ -43,7 +56,7 @@
       var register = async () => {  
         await registerUser(userRequest.value);
       }
-      return {userRequest,register,loginUser};
+      return {userRequest,register,loginUser,result};
     },
   });
 

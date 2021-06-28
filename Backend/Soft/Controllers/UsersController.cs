@@ -9,7 +9,9 @@ using Domain.Users;
 using Facade.Users;
 using Infra.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
@@ -22,19 +24,25 @@ namespace Soft.Controllers
     {
         private readonly IUsersRepository _usersRepository;
         private readonly AppSettings _appSettings;
-
+        private readonly UserRequestValidator _validator;
         public UsersController(
             IUsersRepository usersRepository,
             IOptions<AppSettings> appSettings)
         {
             _usersRepository = usersRepository;
             _appSettings = appSettings.Value;
+            _validator = new UserRequestValidator();
         }
 
         [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserModel))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string[]))]
         [HttpPost("authenticate")]
         public async Task<ActionResult<UserModel>> Authenticate([FromBody] UserRequest userRequest)
         {
+            var validationResult = await _validator.ValidateAsync(userRequest);
+            if (!validationResult.IsValid) return BadRequest(validationResult.Errors.Select(x => x.ErrorMessage));
+
             var result = await _usersRepository.Authenticate(userRequest.Username, userRequest.Password);
 
             if (result.User == null)
@@ -44,9 +52,14 @@ namespace Soft.Controllers
         }
 
         [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserModel))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string[]))]
         [HttpPost("register")]
         public async Task<ActionResult<UserModel>> Register(UserRequest userRequest)
-        { 
+        {
+            var validationResult = await _validator.ValidateAsync(userRequest);
+            if (!validationResult.IsValid) return BadRequest(validationResult.Errors.Select(x => x.ErrorMessage));
+
             var result = await _usersRepository.Create
                 (UserMapper.MapRequestToDomain(userRequest), userRequest.Password);
             return Ok(UserMapper.MapDomainToModel(result, TokenGenerator(result)));
@@ -72,7 +85,10 @@ namespace Soft.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, UserRequest userRequest)
         {
-            if(userRequest.Id != id) return BadRequest(); 
+            var validationResult = await _validator.ValidateAsync(userRequest);
+            if (!validationResult.IsValid) return BadRequest();
+            
+            if (userRequest.Id != id) return BadRequest(); 
             await _usersRepository.Update(UserMapper.MapRequestToDomain(userRequest), userRequest.Password); 
             return Ok();
             

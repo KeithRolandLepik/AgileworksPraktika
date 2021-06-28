@@ -1,4 +1,5 @@
 ﻿using Data.Common;
+using Npgsql.EntityFrameworkCore.PostgreSQL.Query.Expressions.Internal;
 
 namespace Facade.Users
 {
@@ -8,5 +9,7 @@ namespace Facade.Users
         public string LastName { get; set; }
         public string Username { get; set; }
         public string Password { get; set; }
+        public string Gender { get; set; }
+        public bool IsOtherGender { get; set; }
     }
 }

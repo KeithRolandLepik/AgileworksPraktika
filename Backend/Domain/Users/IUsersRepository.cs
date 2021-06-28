@@ -12,18 +12,4 @@ namespace Domain.Users
         Task Update(User user, string password = null);
         Task Delete(int id);
     }
-    public class AuthenticateResult
-    {
-        public static AuthenticateResult Success(User user)
-        {
-            return new() { User = user };
-        }
-        public static AuthenticateResult Failure(string errorMessage)
-        {
-            return new() { ErrorMessage = errorMessage };
-        }
-
-        public User? User { get; set; }
-        public string? ErrorMessage { get; set; }
-    }
 }
