@@ -7,7 +7,8 @@ import UserModel from '@/interfaces/UserModel';
 import UserRequest from '@/interfaces/UserRequest';
 
 const state = reactive({
-  user: ref<UserModel>()
+  user: ref<UserModel>(),
+  errors: ref<UserModel[]>()
 });
 
 export default function useUsers() {
@@ -43,14 +44,20 @@ export default function useUsers() {
       },
       body: JSON.stringify(userRequest),
     };
-    const apiAuthUser = useApi<UserModel>(
+    const apiAuthUser = useApi<UserModel[]>(
       'Users/register',
       requestOptions,
     );
     await apiAuthUser.request();
-    if (apiAuthUser.response.value!) {
+    if(apiAuthUser.code.value === 200){
+          var response = apiAuthUser.response.value!;
+          state.user = response[0];
+    }
+    else{
       var response = apiAuthUser.response.value!;
-      state.user = response;
+      response.forEach(e => {
+        state.errors?.push(e.errorMessage)
+      });
     }
   };
   const logoutUser = () => {
