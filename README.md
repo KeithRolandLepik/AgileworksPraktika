@@ -14,7 +14,7 @@ Run application using IDE
   
 Front end Application
 
-Need: nmp
+Need: npm
 
 Open terminal in frontend root directory(../AgileWorksPraktika/Frontend)
 
