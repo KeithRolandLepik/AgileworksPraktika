@@ -1,5 +1,4 @@
 ﻿using AutoFixture;
-using Data.Feedbacks;
 using Data.Users;
 using Facade.Users;
 using Infra.Authentication;
@@ -150,7 +149,7 @@ namespace Tests.Soft.Controllers
             };
 
             // Act
-            var result = Controller.Register(userRequest).GetAwaiter().GetResult().Value;
+            var result = (UserModel)((OkObjectResult)Controller.Register(userRequest).GetAwaiter().GetResult().Result).Value;
             var databaseUser = ((UserModel)((OkObjectResult)Controller.GetById(result.Id).GetAwaiter().GetResult().Result).Value);
 
             // Assert
@@ -176,7 +175,8 @@ namespace Tests.Soft.Controllers
                 Password = password,
                 Username = user.Username
             };
-            _userData.Id = Controller.Register(userRequest).GetAwaiter().GetResult().Value.Id;
+            _userData.Id = ((UserModel)((OkObjectResult)Controller.
+                Register(userRequest).GetAwaiter().GetResult().Result).Value).Id;
         }
     }
 }

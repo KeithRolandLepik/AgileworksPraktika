@@ -15,25 +15,28 @@ namespace Tests.Soft.Controllers
     public class MockFeedbackControllerTests : BaseTests
     {
         internal FeedbackController Controller;
+        internal Mock<IFeedbackRepository> MockRepository;
+        internal FeedbackRepositoryMock FeedbackMock;
 
         [TestInitialize]
         public void TestInitialize()
         {
             Fixture = new Fixture();
+            MockRepository = new Mock<IFeedbackRepository>();
+            FeedbackMock = new FeedbackRepositoryMock();
         }
 
         [TestMethod]
         public void GetFeedbacks_should_return_all_feedbacks()
         {
-            var mockRepository = new Mock<IFeedbackRepository>();
             var l = new List<Feedback>();
             for (int i = 0; i < 5; i++)
             {
                 l.Add(new Feedback(Fixture.Create<FeedbackData>()));
             }
-
-            mockRepository.Setup(x => x.Get().Result).Returns(l);
-            Controller = new FeedbackController(mockRepository.Object);
+            FeedbackMock.SetupFeedbacks(l);
+            //MockRepository.Setup(x => x.Get().Result).Returns(l);
+            Controller = new FeedbackController(FeedbackMock);
 
             // Act
             var result = Controller.GetFeedbacks().GetAwaiter().GetResult().Value;
@@ -45,14 +48,15 @@ namespace Tests.Soft.Controllers
         [TestMethod]
         public void GetFeedback_should_return_feedback_with_given_id()
         {
-            var mockRepository = new Mock<IFeedbackRepository>();
             var data = Fixture.Create<FeedbackData>();
             var entity = new Feedback(data);
 
-            mockRepository.DefaultValue = DefaultValue.Mock;
-            mockRepository.Setup(x =>
-                x.Get(data.Id)).Returns(Task.FromResult(entity));
-            Controller = new FeedbackController(mockRepository.Object);
+            //MockRepository.DefaultValue = DefaultValue.Mock;
+            //MockRepository.Setup(x =>
+            //x.Get(data.Id)).Returns(Task.FromResult(entity));
+            
+            FeedbackMock.SetupUserFeedback(entity);
+            Controller = new FeedbackController(FeedbackMock);
 
             // Act
             var result = ((FeedbackModel) ((OkObjectResult)
@@ -65,13 +69,14 @@ namespace Tests.Soft.Controllers
         [TestMethod]
         public void GetFeedback_should_return_notFound_with_wrong_id()
         {
-            var mockRepository = new Mock<IFeedbackRepository>();
-            var data = Fixture.Create<FeedbackData>();
+            //var data = Fixture.Create<FeedbackData>();
 
-            mockRepository.DefaultValue = DefaultValue.Mock;
-            mockRepository.Setup(x =>
-                x.Get(It.IsAny<int>())).ReturnsAsync(new Feedback());
-            Controller = new FeedbackController(mockRepository.Object);
+            //MockRepository.DefaultValue = DefaultValue.Mock;
+            //MockRepository.Setup(x =>
+            //    x.Get(It.IsAny<int>())).ReturnsAsync(new Feedback());
+
+            FeedbackMock.SetupUserFeedback(new Feedback());
+            Controller = new FeedbackController(FeedbackMock);
 
             // Act
             var result2 = Controller.GetFeedback(Fixture.Create<int>()).GetAwaiter()
@@ -84,34 +89,34 @@ namespace Tests.Soft.Controllers
         [TestMethod]
         public void PutFeedback_should_return_okResult_if_request_correct_and_id_in_database()
         {
-            var mockRepository = new Mock<IFeedbackRepository> { DefaultValue = DefaultValue.Mock };
             var data = Fixture.Create<FeedbackData>();
             var entity = new Feedback(data);
+
+            FeedbackMock.SetupUserFeedback(entity);
             var request = Fixture.Create<UpdateFeedbackRequest>();
-            mockRepository.Setup(x =>
-                x.Update(entity)).Returns(Task.CompletedTask);
-            mockRepository.Setup(x =>
-                x.Get(data.Id)).ReturnsAsync(entity);
-            Controller = new FeedbackController(mockRepository.Object);
+            //MockRepository.Setup(x =>
+            //    x.Update(entity)).Returns(Task.CompletedTask);
+            //MockRepository.Setup(x =>
+            //    x.Get(data.Id)).ReturnsAsync(entity);
+            Controller = new FeedbackController(FeedbackMock);
 
             // Act
             var result1 = Controller.PutFeedback(data.Id,request).GetAwaiter().GetResult();
-            mockRepository.Verify(x => x.Update(entity), Times.Once);
-
+            
             // Assert
+            Assert.IsTrue(FeedbackMock.VerifyUpdate());
             Assert.AreEqual(result1.GetType(), typeof(OkResult));
         }
 
         [TestMethod]
         public void PutFeedback_should_return_badRequest_if_request_incorrect()
         {
-            var mockRepository = new Mock<IFeedbackRepository> { DefaultValue = DefaultValue.Mock };
             var entity = new Feedback();
             var request = new UpdateFeedbackRequest();
 
-            mockRepository.Setup(x =>
+            MockRepository.Setup(x =>
                 x.Update(entity)).Returns(Task.CompletedTask);
-            Controller = new FeedbackController(mockRepository.Object);
+            Controller = new FeedbackController(MockRepository.Object);
 
             // Act
             var result1 = Controller.PutFeedback(Fixture.Create<int>(), request)
@@ -124,18 +129,17 @@ namespace Tests.Soft.Controllers
         [TestMethod]
         public void PutFeedback_should_return_badRequest_if_entity_is_not_in_database()
         {
-            var mockRepository = new Mock<IFeedbackRepository> { DefaultValue = DefaultValue.Mock };
             var request = Fixture.Create<UpdateFeedbackRequest>();
             var id = Fixture.Create<int>();
 
-            mockRepository.Setup(x =>
+            MockRepository.Setup(x =>
                 x.Get(id)).ReturnsAsync(new Feedback());
-            Controller = new FeedbackController(mockRepository.Object);
+            Controller = new FeedbackController(MockRepository.Object);
 
             // Act
             var result1 = Controller.PutFeedback(id, request)
                 .GetAwaiter().GetResult();
-            mockRepository.Verify(x => x.Get(id),Times.Once);
+            MockRepository.Verify(x => x.Get(id),Times.Once);
 
             // Assert
             Assert.AreEqual(result1.GetType(), typeof(BadRequestResult));
@@ -144,30 +148,32 @@ namespace Tests.Soft.Controllers
         [TestMethod]
         public void DeleteFeedback_should_return_noContentResult_if_entity_is_in_database()
         {
-            var mockRepository = new Mock<IFeedbackRepository> {DefaultValue = DefaultValue.Mock};
             var id = Fixture.Create<int>();
-            mockRepository.Setup(x =>
-                x.Delete(id)).Returns(Task.CompletedTask);
-            mockRepository.Setup(x =>
-                x.Get(id)).ReturnsAsync(new Feedback(Fixture.Create<FeedbackData>()));
-            Controller = new FeedbackController(mockRepository.Object);
+            //MockRepository.Setup(x =>
+            //    x.Delete(id)).Returns(Task.CompletedTask);
+            //MockRepository.Setup(x =>
+            //    x.Get(id)).ReturnsAsync(new Feedback(Fixture.Create<FeedbackData>()));
+            var entity = new Feedback(Fixture.Create<FeedbackData>());
+            entity.Data.Id = id;
+            FeedbackMock.SetupUserFeedback(entity);
+            
+            Controller = new FeedbackController(FeedbackMock);
 
             // Act
             var result1 = Controller.DeleteFeedback(id).GetAwaiter().GetResult();
 
             // Assert
-            mockRepository.Verify(x => x.Delete(id), Times.Once);
+            Assert.IsTrue(FeedbackMock.VerifyDelete());
             Assert.AreEqual(result1.GetType(), typeof(NoContentResult));
         }
 
         [TestMethod]
         public void DeleteFeedback_should_return_notFoundResult_if_entity_is_not_in_database()
         {
-            var mockRepository = new Mock<IFeedbackRepository> { DefaultValue = DefaultValue.Mock };
             var id = Fixture.Create<int>();
-            mockRepository.Setup(x =>
+            MockRepository.Setup(x =>
                 x.Get(It.IsAny<int>())).ReturnsAsync(new Feedback());
-            Controller = new FeedbackController(mockRepository.Object);
+            Controller = new FeedbackController(MockRepository.Object);
 
             // Act
             var result2 = Controller.DeleteFeedback(Fixture.Create<int>()).GetAwaiter().GetResult();
@@ -179,9 +185,8 @@ namespace Tests.Soft.Controllers
         [TestMethod]
         public void PostFeedback_should_return_badRequest_if_request_values_null()
         {
-            var mockRepository = new Mock<IFeedbackRepository> {DefaultValue = DefaultValue.Mock};
             var request = new AddFeedbackRequest();
-            Controller = new FeedbackController(mockRepository.Object);
+            Controller = new FeedbackController(MockRepository.Object);
 
             // Act
             var response = Controller.PostFeedback(request).GetAwaiter().GetResult().Result;
@@ -192,11 +197,10 @@ namespace Tests.Soft.Controllers
         [TestMethod]
         public void PostFeedback_should_return_conflict_if_create_fails()
         {
-            var mockRepository = new Mock<IFeedbackRepository> { DefaultValue = DefaultValue.Mock };
-            mockRepository.Setup(x =>
+            MockRepository.Setup(x =>
                 x.Add(It.IsAny<Feedback>())).ReturnsAsync(new Feedback());
 
-            Controller = new FeedbackController(mockRepository.Object);
+            Controller = new FeedbackController(MockRepository.Object);
 
             // Act
             var result = Controller.PostFeedback(Fixture.Create<AddFeedbackRequest>()).GetAwaiter().GetResult().Result;
@@ -207,15 +211,14 @@ namespace Tests.Soft.Controllers
         [TestMethod]
         public void PostFeedback_should_return_createdAtAction_if_request_successful()
         {
-            var mockRepository = new Mock<IFeedbackRepository> { DefaultValue = DefaultValue.Mock };
-            mockRepository.Setup(x =>
+            MockRepository.Setup(x =>
                 x.Add(It.IsAny<Feedback>())).ReturnsAsync(new Feedback(Fixture.Create<FeedbackData>()));
 
-            Controller = new FeedbackController(mockRepository.Object);
+            Controller = new FeedbackController(MockRepository.Object);
 
             // Act
             var result = Controller.PostFeedback(Fixture.Create<AddFeedbackRequest>()).GetAwaiter().GetResult().Result;
-            mockRepository.Verify(x => x.Add(It.IsAny<Feedback>()),Times.Once);
+            MockRepository.Verify(x => x.Add(It.IsAny<Feedback>()),Times.Once);
 
             // Assert
             Assert.AreEqual(result.GetType(),typeof(CreatedAtActionResult));

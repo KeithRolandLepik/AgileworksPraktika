@@ -27,6 +27,7 @@ namespace Tests.Soft.Controllers
             var mock = new Mock<IOptions<AppSettings>>();
             mock.Setup(x => x.Value).Returns(app);
             AppSettings = mock.Object;
+
         }
 
         [TestMethod]

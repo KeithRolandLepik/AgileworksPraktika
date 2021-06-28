@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Data.Feedbacks;
 using Data.Users;
 using Domain.Users;
 using Marten;
@@ -34,24 +33,6 @@ namespace Infra.Authentication
             return !VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt)
                 ? AuthenticateResult.Failure("Wrong password") : AuthenticateResult.Success(new User(user));
         }
-        //public async Task<(User? user, string? errorMessage)> Authenticate2(string username, string password)
-        //{
-        //    await using var session = _store.LightweightSession();
-
-        //    var nr = "123123";
-        //    var a = double.TryParse(nr,out var r);
-
-        //    if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
-        //        return (null,"Wrong Password");
-
-        //    var user = session.Query<UserData>().SingleOrDefault(x => x.Username == username);
-
-        //    if (user == null) 
-        //        return (null, "Wrong Password");
-
-        //    return !VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt)
-        //        ? (null, "Wrong Password") : (new User(user), null);
-        //}
         public async Task<List<User>> GetAll()
         {
             await using var session = _store.LightweightSession();

@@ -47,7 +47,8 @@ namespace Soft.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<UserModel>> Register(UserRequest userRequest)
         { 
-            var result = await _usersRepository.Create(UserMapper.MapRequestToDomain(userRequest), userRequest.Password);
+            var result = await _usersRepository.Create
+                (UserMapper.MapRequestToDomain(userRequest), userRequest.Password);
             return Ok(UserMapper.MapDomainToModel(result, TokenGenerator(result)));
         }
 
