@@ -7,9 +7,12 @@ using System.Text;
 using System.Threading.Tasks;
 using Domain.Users;
 using Facade.Users;
+using Infra;
 using Infra.Authentication;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 
@@ -22,16 +25,19 @@ namespace Soft.Controllers
     {
         private readonly IUsersRepository _usersRepository;
         private readonly AppSettings _appSettings;
-
+        private readonly UserRequestValidator _validator;
         public UsersController(
             IUsersRepository usersRepository,
             IOptions<AppSettings> appSettings)
         {
             _usersRepository = usersRepository;
             _appSettings = appSettings.Value;
+            _validator = new UserRequestValidator();
         }
 
         [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserModel))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string[]))]
         [HttpPost("authenticate")]
         public async Task<ActionResult<UserModel>> Authenticate([FromBody] UserRequest userRequest)
         {
@@ -40,29 +46,22 @@ namespace Soft.Controllers
             if (user == null)
                 return BadRequest();
 
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = new ClaimsIdentity(new Claim[]
-                {
-                    new(ClaimTypes.Name, user.Data.Id.ToString())
-                }),
-                Expires = DateTime.UtcNow.AddDays(7),
-                SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
-            };
-            var token = tokenHandler.CreateToken(tokenDescriptor);
-            var tokenString = tokenHandler.WriteToken(token);
             
-            return Ok(UserMapper.MapDomainToModel(user,tokenString));
+            return Ok(UserMapper.MapDomainToModel(user,TokenGenerator(user)));
         }
 
         [AllowAnonymous]
+        [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(UserModel))]
+        [ProducesResponseType(StatusCodes.Status400BadRequest, Type = typeof(string[]))]
         [HttpPost("register")]
         public async Task<ActionResult<UserModel>> Register(UserRequest userRequest)
-        { 
-            var result = await _usersRepository.Create(UserMapper.MapRequestToDomain(userRequest), userRequest.Password);
-            return UserMapper.MapDomainToModel(result,string.Empty);
+        {
+            var validationResult = await _validator.ValidateAsync(userRequest);
+            if (!validationResult.IsValid) return BadRequest();
+
+            var result = await _usersRepository.Create
+                (UserMapper.MapRequestToDomain(userRequest), userRequest.Password);
+            return Ok(UserMapper.MapDomainToModel(result, TokenGenerator(result)));
         }
 
         [HttpGet]
@@ -85,7 +84,10 @@ namespace Soft.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> Update(int id, UserRequest userRequest)
         {
-            if(userRequest.Id != id) return BadRequest(); 
+            var validationResult = await _validator.ValidateAsync(userRequest);
+            if (!validationResult.IsValid) return BadRequest();
+            
+            if (userRequest.Id != id) return BadRequest(); 
             await _usersRepository.Update(UserMapper.MapRequestToDomain(userRequest), userRequest.Password); 
             return Ok();
             
@@ -100,6 +102,26 @@ namespace Soft.Controllers
          
             await _usersRepository.Delete(id);
             return Ok();
+        }
+
+
+        private string TokenGenerator(User user)
+        {
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var key = Encoding.ASCII.GetBytes(_appSettings.Secret);
+            var tokenDescriptor = new SecurityTokenDescriptor
+            {
+                Subject = new ClaimsIdentity(new Claim[]
+                {
+                    new(ClaimTypes.Name, user.Data.Id.ToString())
+                }),
+                Expires = DateTime.UtcNow.AddDays(7),
+                SigningCredentials = new SigningCredentials
+                    (new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
+            };
+            var token = tokenHandler.CreateToken(tokenDescriptor);
+            var tokenString = tokenHandler.WriteToken(token);
+            return tokenString;
         }
     }
 }
