@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using AutoFixture;
-using Data.Feedbacks;
+using Data.Users;
+using Domain.Users;
 using Facade.Users;
 using Infra.Authentication;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -14,6 +15,7 @@ namespace Tests.Infra.Authentication
         protected UsersRepository Repository;
         private UserData _userData;
         private string _mockPassword;
+
         [TestInitialize]
         public void TestInitialize()
         {
@@ -35,23 +37,39 @@ namespace Tests.Infra.Authentication
                 Password = _mockPassword,
                 Username = _userData.Username
             };
-            _userData = Repository.Create(UserMapper.MapRequestToDomain(userRequest), userRequest.Password).GetAwaiter().GetResult().Data;
+            _userData = Repository.Create(UserMapper.MapRequestToDomain(userRequest), userRequest.Password).GetAwaiter().GetResult()?.Data;
         }
 
         [TestMethod]
-        public void Authenticate_should_respond_null_if_incorrect_login_and_notnull_if_correct_login()
+        public void Authenticate_should_return_authenticateResult_error_wrong_password_if_incorrect_login()
         {
             var password = Fixture.Create<string>();
 
             // Act
             var response = Repository.Authenticate(_userData.Username, password).GetAwaiter().GetResult();
-            var response2 = Repository.Authenticate(Fixture.Create<string>(),_userData.Username).GetAwaiter().GetResult();
-            var response3 = Repository.Authenticate(_userData.Username, _mockPassword).GetAwaiter().GetResult();
 
             // Assert
-            Assert.IsNull(response);
-            Assert.IsNull(response2);
-            Assert.IsNotNull(response3);
+            Assert.AreEqual(response.ErrorMessage,"Wrong password");
+        }
+
+        [TestMethod]
+        public void Authenticate_should_return_authenticateResult_error_user_not_found_if_incorrect_login()
+        {
+            // Act
+            var response2 = Repository.Authenticate(Fixture.Create<string>(), _userData.Username).GetAwaiter().GetResult();
+            
+            // Assert
+            Assert.AreEqual(response2.ErrorMessage, "User not found");
+        }
+
+        [TestMethod]
+        public void Authenticate_should_return_authenticateResult_user_if_correct_login()
+        {
+            // Act
+             var response3 = Repository.Authenticate(_userData.Username, _mockPassword).GetAwaiter().GetResult();
+
+            // Assert
+            Assert.IsNotNull(response3.User);
         }
 
         [TestMethod]
@@ -77,6 +95,16 @@ namespace Tests.Infra.Authentication
         }
 
         [TestMethod]
+        public void GetById_should_return_null_if_user_not_found()
+        {
+            // Act
+            var userData = Repository.GetById(Fixture.Create<int>()).GetAwaiter().GetResult();
+
+            // Assert
+            Assert.IsNull(userData);
+        }
+
+        [TestMethod]
         public void Create_should_add_an_object_to_database()
         {
             var countBefore = Repository.GetAll().GetAwaiter().GetResult().Count();
@@ -90,12 +118,33 @@ namespace Tests.Infra.Authentication
         }
 
         [TestMethod]
+        public void Create_should_return_null_if_password_empty()
+        {
+            
+            // Act
+            var result = Repository.Create(UserMapper.MapRequestToDomain(Fixture.Create<UserRequest>()), string.Empty).GetAwaiter().GetResult();
+
+            // Assert
+            Assert.IsNull(result);
+        }
+
+        [TestMethod]
+        public void Create_should_return_null_if_user_already_in_database()
+        {
+
+            // Act
+            var result = Repository.Create(new User(_userData), _mockPassword).GetAwaiter().GetResult();
+
+            // Assert
+            Assert.IsNull(result);
+        }
+
+        [TestMethod]
         public void Update_should_update_a_user_with_correct_id_and_password()
         {
             var newFeedbackUpdate = Fixture.Create<UserRequest>();
 
             // Act
-            var initialUserData = Repository.GetById(_userData.Id).GetAwaiter().GetResult();
             var userToUpdate = UserMapper.MapRequestToDomain(newFeedbackUpdate);
             userToUpdate.Data.Id = _userData.Id;
             Repository.Update(userToUpdate,_mockPassword).GetAwaiter().GetResult();

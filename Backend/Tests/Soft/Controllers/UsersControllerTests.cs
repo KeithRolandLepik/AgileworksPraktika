@@ -1,5 +1,5 @@
 ﻿using AutoFixture;
-using Data.Feedbacks;
+using Data.Users;
 using Facade.Users;
 using Infra.Authentication;
 using Microsoft.AspNetCore.Mvc;
@@ -33,7 +33,7 @@ namespace Tests.Soft.Controllers
         }
 
         [TestMethod]
-        public void Authenticate_should_return_badRequestObjectResult_on_not_registered_login_attempt_and_OkObjectResult_and_auth_token_on_registered_user()
+        public void Authenticate_should_return_badRequestResult_on_not_registered_login_attempt_and_OkObjectResult_and_auth_token_on_registered_user()
         {
             var randomUserRequest = Fixture.Create<UserRequest>();
             var actualUserRequest = new UserRequest
@@ -51,7 +51,7 @@ namespace Tests.Soft.Controllers
             var value = ((UserModel)((OkObjectResult)response2.Result).Value);
 
             // Assert
-            Assert.AreEqual(typeof(BadRequestObjectResult), ((BadRequestObjectResult)response1.Result).GetType());
+            Assert.AreEqual(typeof(BadRequestResult), ((BadRequestResult)response1.Result).GetType());
             Assert.AreEqual(typeof(OkObjectResult), ((OkObjectResult)response2.Result).GetType());
             Assert.AreEqual(value.Id, _userData.Id);
             Assert.AreEqual(value.FirstName, _userData.FirstName);
@@ -149,7 +149,7 @@ namespace Tests.Soft.Controllers
             };
 
             // Act
-            var result = Controller.Register(userRequest).GetAwaiter().GetResult().Value;
+            var result = (UserModel)((OkObjectResult)Controller.Register(userRequest).GetAwaiter().GetResult().Result).Value;
             var databaseUser = ((UserModel)((OkObjectResult)Controller.GetById(result.Id).GetAwaiter().GetResult().Result).Value);
 
             // Assert
@@ -175,7 +175,8 @@ namespace Tests.Soft.Controllers
                 Password = password,
                 Username = user.Username
             };
-            _userData.Id = Controller.Register(userRequest).GetAwaiter().GetResult().Value.Id;
+            _userData.Id = ((UserModel)((OkObjectResult)Controller.
+                Register(userRequest).GetAwaiter().GetResult().Result).Value).Id;
         }
     }
 }

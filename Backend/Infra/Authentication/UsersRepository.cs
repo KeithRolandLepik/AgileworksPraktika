@@ -2,45 +2,44 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Data.Feedbacks;
+using Data.Users;
 using Domain.Users;
 using Marten;
 
 namespace Infra.Authentication
 {
+
     public class UsersRepository : IUsersRepository
     {
         private readonly IDocumentStore _store;
-        
-        // TODO UsersRepository peaks refaktoreerima nii, et see kasutaks ka baserepository meetodeid
 
         public UsersRepository(IDocumentStore store)
         {
             _store = store;
         }
 
-        public async Task<User> Authenticate(string username, string password)
+        public async Task<AuthenticateResult> Authenticate(string username, string password)
         {
             await using var session = _store.LightweightSession();
 
             if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password))
-                return null;
+                return AuthenticateResult.Failure("Wrong Password");
 
             var user = session.Query<UserData>().SingleOrDefault(x => x.Username == username);
             
             if (user == null)
-                return null;
+                return AuthenticateResult.Failure("User not found");
 
-            return !VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt) ? null : new User(user);
+            return !VerifyPasswordHash(password, user.PasswordHash, user.PasswordSalt)
+                ? AuthenticateResult.Failure("Wrong password") : AuthenticateResult.Success(new User(user));
         }
-
         public async Task<List<User>> GetAll()
         {
             await using var session = _store.LightweightSession();
             return ToDomainObjectsList(await session.Query<UserData>().ToListAsync());
         }
 
-        public async Task<User> GetById(int id)
+        public async Task<User?> GetById(int id)
         {
             await using var session = _store.LightweightSession();
 
@@ -49,15 +48,13 @@ namespace Infra.Authentication
             return user == null ? null : ToDomainObject(user);
         }
 
-        public async Task<User> Create(User userRequest, string password)
+        public async Task<User?> Create(User userRequest, string password)
         {
             await using var session = _store.LightweightSession();
             
-            if (string.IsNullOrWhiteSpace(password))
-                return null;
+            var validatorResult= UsersRepositoryValidator.CanCreateUser(userRequest, session);
 
-            if (session.Query<UserData>().Any(x => x.Username == userRequest.Data.Username))
-                return null;
+            if (validatorResult.Item1) return null;
 
             CreatePasswordHash(password, out var passwordHash, out var passwordSalt);
 
@@ -76,14 +73,11 @@ namespace Infra.Authentication
             return ToDomainObject(userData);
         }
 
-        public async Task Update(User userReq, string password = null)
+        public async Task Update(User userReq, string password)
         {
             await using var session = _store.LightweightSession();
             var user = session.Query<UserData>().First(x => x.Id == userReq.Data.Id);
 
-            if (user == null)
-                return;
-            
             if (!string.IsNullOrWhiteSpace(userReq.Data.Username) && userReq.Data.Username != user.Username)
             {
                 if (session.Query<UserData>().Any(x => x.Username == userReq.Data.Username))
@@ -115,8 +109,6 @@ namespace Infra.Authentication
             await using var session = _store.LightweightSession();
             
             var user = session.Query<UserData>().First(x => x.Id == id);
-
-            if (user == null) return;
             
             session.Delete(user);
             await session.SaveChangesAsync();

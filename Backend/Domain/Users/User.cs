@@ -1,4 +1,4 @@
-﻿using Data.Feedbacks;
+﻿using Data.Users;
 using Domain.Common;
 
 namespace Domain.Users
